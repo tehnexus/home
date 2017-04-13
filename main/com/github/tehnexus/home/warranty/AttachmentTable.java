@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty;
+package com.github.tehnexus.home.warranty;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -23,20 +23,20 @@ import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.table.AbstractTableModel;
 
-import org.tehnexus.awt.Dimension;
-import org.tehnexus.home.util.Identifier;
-import org.tehnexus.home.warranty.classes.Attachment;
-import org.tehnexus.home.warranty.classes.Properties;
-import org.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.awt.Dimension;
+import com.github.tehnexus.home.util.Identifier;
+import com.github.tehnexus.home.warranty.classes.Attachment;
+import com.github.tehnexus.home.warranty.classes.Properties;
+import com.github.tehnexus.home.warranty.classes.Property;
 
 public class AttachmentTable extends JDialog {
 
-	private final Property									product;
-	private final Properties								properties;
-	private AttachmentTableModel							tableModel;
-	private HashMap<Integer, LoadAttachmentViewerWorker>	workers			= new HashMap<>(0);
-	private HashMap<Integer, AttachmentViewer>				finishedWorkers	= new HashMap<>(0);
-	private JButton											btnExport		= new JButton("Export");
+	private final Property product;
+	private final Properties properties;
+	private AttachmentTableModel tableModel;
+	private HashMap<Integer, LoadAttachmentViewerWorker> workers = new HashMap<>(0);
+	private HashMap<Integer, AttachmentViewer> finishedWorkers = new HashMap<>(0);
+	private JButton btnExport = new JButton("Export");
 
 	// private AttachmentViewer attViewer;
 
@@ -89,7 +89,7 @@ public class AttachmentTable extends JDialog {
 		// set comboBox as editor and renderer for type column
 		table.setDefaultRenderer(Property.class, new ComboTableCellRenderer());
 		table.setDefaultEditor(Property.class, new ComboCellEditor(allAttachTypesList));
-		
+
 		// set button as editor and renderer for attachment column
 		TableButtonColumn tableButtonColumn = new TableButtonColumn(table, new TableButtonAction(), 2);
 
@@ -111,12 +111,10 @@ public class AttachmentTable extends JDialog {
 			if (Editor.PLACEHOLDER_NEW.equalsIgnoreCase(btnText)) {
 				try {
 					AttachmentViewer attViewer = new AttachmentViewer(null);
-				}
-				catch (IOException | SQLException e) {
+				} catch (IOException | SQLException e) {
 					e.printStackTrace();
 				}
-			}
-			else {
+			} else {
 				int row = ae.getModifiers();
 				int id = tableModel.getAttachmentAt(row).getId();
 				AttachmentViewer attViewer = null;
@@ -125,12 +123,10 @@ public class AttachmentTable extends JDialog {
 					try { // id not done, wait
 						attViewer = workers.get(id).get();
 						finishedWorkers.put(id, attViewer);
-					}
-					catch (InterruptedException | ExecutionException e) {
+					} catch (InterruptedException | ExecutionException e) {
 						e.printStackTrace();
 					}
-				}
-				else { // id done show
+				} else { // id done show
 					attViewer = finishedWorkers.get(id);
 				}
 				attViewer.setVisible(true);
@@ -140,12 +136,12 @@ public class AttachmentTable extends JDialog {
 
 	public class AttachmentTableModel extends AbstractTableModel {
 
-		private final Comparator<Attachment>	tnc		= Comparator.comparing(Attachment::isDummy)
+		private final Comparator<Attachment> tnc = Comparator.comparing(Attachment::isDummy)
 				.thenComparing(Attachment::getId);
 
-		private final List<Property>			allAttachTypesList;
-		private final String[]					colNames;
-		private List<Attachment>				data	= new ArrayList<>(0);
+		private final List<Property> allAttachTypesList;
+		private final String[] colNames;
+		private List<Attachment> data = new ArrayList<>(0);
 
 		public AttachmentTableModel(List<Property> allAttachTypesList, String[] columnNames) {
 			this.allAttachTypesList = allAttachTypesList;
@@ -264,8 +260,7 @@ public class AttachmentTable extends JDialog {
 					&& ((StateValue) pce.getNewValue()).equals(StateValue.DONE)) {
 				try {
 					finishedWorkers.put(worker.getAttachmentId(), worker.get());
-				}
-				catch (InterruptedException | ExecutionException e) {
+				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 				}
 			}

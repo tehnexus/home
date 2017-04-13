@@ -1,4 +1,4 @@
-package org.tehnexus.home.util;
+package com.github.tehnexus.home.util;
 
 public enum Identifier {
 

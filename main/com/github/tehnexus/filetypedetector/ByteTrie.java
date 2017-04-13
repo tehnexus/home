@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tehnexus.filetypedetector;
+package com.github.tehnexus.filetypedetector;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Stores values using a prefix tree (aka 'trie', i.e. reTRIEval data structure).
+ * Stores values using a prefix tree (aka 'trie', i.e. reTRIEval data
+ * structure).
  * 
  * @author Drew Noakes
  * @see https://github.com/drewnoakes/metadata-extractor
@@ -59,9 +60,9 @@ class ByteTrie<T> {
 	}
 
 	/**
-	 * Return the most specific value stored for this byte sequence. If not found, returns
-	 * <code>null</code> or a default values as specified by calling
-	 * {@link ByteTrie#setDefaultValue}.
+	 * Return the most specific value stored for this byte sequence. If not
+	 * found, returns <code>null</code> or a default values as specified by
+	 * calling {@link ByteTrie#setDefaultValue}.
 	 * 
 	 * @param bytes
 	 * @return
@@ -92,7 +93,8 @@ class ByteTrie<T> {
 	}
 
 	/**
-	 * Sets the default value to use in {@link ByteTrie#find(byte[])} when no path matches.
+	 * Sets the default value to use in {@link ByteTrie#find(byte[])} when no
+	 * path matches.
 	 * 
 	 * @param defaultValue
 	 */

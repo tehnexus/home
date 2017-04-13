@@ -1,4 +1,4 @@
-package org.tehnexus.image;
+package com.github.tehnexus.image;
 
 
 public enum SizeFit {

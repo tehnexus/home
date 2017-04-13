@@ -1,6 +1,6 @@
-package org.tehnexus.home.warranty.classes;
+package com.github.tehnexus.home.warranty.classes;
 
-import org.tehnexus.home.util.Identifier;
+import com.github.tehnexus.home.util.Identifier;
 
 public class Shop extends Property {
 

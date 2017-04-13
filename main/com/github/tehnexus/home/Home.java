@@ -1,4 +1,4 @@
-package org.tehnexus.home;
+package com.github.tehnexus.home;
 
 import java.io.IOException;
 

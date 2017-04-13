@@ -1,4 +1,4 @@
-package org.tehnexus.swing.utils;
+package com.github.tehnexus.swing.utils;
 
 import java.awt.Component;
 import java.awt.Container;

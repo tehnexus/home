@@ -1,4 +1,4 @@
-package org.tehnexus.swing;
+package com.github.tehnexus.swing;
 
 import java.awt.Color;
 

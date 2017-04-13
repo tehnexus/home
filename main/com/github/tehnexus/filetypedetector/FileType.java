@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tehnexus.filetypedetector;
+package com.github.tehnexus.filetypedetector;
 
 /**
  * Enumeration of supported file formats.

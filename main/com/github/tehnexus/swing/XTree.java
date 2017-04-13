@@ -1,9 +1,9 @@
-package org.tehnexus.swing;
+package com.github.tehnexus.swing;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
-import org.tehnexus.home.warranty.tree.XTreeModel;
+import com.github.tehnexus.home.warranty.tree.XTreeModel;
 
 public class XTree extends JTree {
 

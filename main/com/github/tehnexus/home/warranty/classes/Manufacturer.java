@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty.classes;
+package com.github.tehnexus.home.warranty.classes;
 
 public class Manufacturer extends Property {
 

@@ -1,10 +1,10 @@
-package org.tehnexus.home.warranty.tree.nodes;
+package com.github.tehnexus.home.warranty.tree.nodes;
 
 import java.util.Map.Entry;
 
-import org.tehnexus.home.warranty.classes.Properties;
-import org.tehnexus.home.warranty.classes.Property;
-import org.tehnexus.home.warranty.tree.XTreeNode;
+import com.github.tehnexus.home.warranty.classes.Properties;
+import com.github.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.home.warranty.tree.XTreeNode;
 
 public class Root extends XTreeNode {
 

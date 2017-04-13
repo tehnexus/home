@@ -1,4 +1,4 @@
-package org.tehnexus.sqlite;
+package com.github.tehnexus.sqlite;
 
 public class SQLStrings {
 

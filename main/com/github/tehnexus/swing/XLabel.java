@@ -1,4 +1,4 @@
-package org.tehnexus.swing;
+package com.github.tehnexus.swing;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -6,7 +6,7 @@ import java.awt.Font;
 
 import javax.swing.JLabel;
 
-import org.tehnexus.awt.XFont;
+import com.github.tehnexus.awt.XFont;
 
 public class XLabel extends JLabel {
 

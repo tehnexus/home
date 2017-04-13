@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty;
+package com.github.tehnexus.home.warranty;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -8,8 +8,8 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 
-import org.tehnexus.home.warranty.classes.Property;
-import org.tehnexus.swing.XSeparator;
+import com.github.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.swing.XSeparator;
 
 public class ComboListCellRenderer extends JLabel implements ListCellRenderer<Property> {
 

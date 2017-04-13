@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty.tree;
+package com.github.tehnexus.home.warranty.tree;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -20,10 +20,10 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.tehnexus.home.util.Identifier;
-import org.tehnexus.home.warranty.classes.Properties;
-import org.tehnexus.home.warranty.tree.nodes.Root;
-import org.tehnexus.swing.XTree;
+import com.github.tehnexus.home.util.Identifier;
+import com.github.tehnexus.home.warranty.classes.Properties;
+import com.github.tehnexus.home.warranty.tree.nodes.Root;
+import com.github.tehnexus.swing.XTree;
 
 import net.miginfocom.swing.MigLayout;
 

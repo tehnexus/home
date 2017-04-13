@@ -1,11 +1,11 @@
-package org.tehnexus.home.warranty.tree;
+package com.github.tehnexus.home.warranty.tree;
 
 import java.util.Enumeration;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.home.warranty.classes.Property;
 
 public class XTreeNode extends DefaultMutableTreeNode {
 

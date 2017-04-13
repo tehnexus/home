@@ -1,11 +1,11 @@
-package org.tehnexus.home.warranty.classes;
+package com.github.tehnexus.home.warranty.classes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.tehnexus.home.util.Identifier;
-import org.tehnexus.home.warranty.tree.XTreeNode;
+import com.github.tehnexus.home.util.Identifier;
+import com.github.tehnexus.home.warranty.tree.XTreeNode;
 
 public class Property extends XTreeNode {
 

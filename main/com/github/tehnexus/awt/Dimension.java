@@ -1,21 +1,22 @@
-package org.tehnexus.awt;
+package com.github.tehnexus.awt;
 
 /**
- * The <code>Dimension</code> class encapsulates the width and height of a component (in integer
- * precision) in a single object. The class is associated with certain properties of components.
- * Several methods defined by the <code>Component</code> class and the <code>LayoutManager</code>
- * interface return a <code>Dimension</code> object.
+ * The <code>Dimension</code> class encapsulates the width and height of a
+ * component (in integer precision) in a single object. The class is associated
+ * with certain properties of components. Several methods defined by the
+ * <code>Component</code> class and the <code>LayoutManager</code> interface
+ * return a <code>Dimension</code> object.
  * <p>
- * Normally the values of <code>width</code> and <code>height</code> are non-negative integers. The
- * constructors that allow you to create a dimension do not prevent you from setting a negative
- * value for these properties. If the value of <code>width</code> or <code>height</code> is
- * negative, the behavior of some methods defined by other objects is undefined.
- * <p>
- * Enhanced by KK, 07.04.2017
+ * Normally the values of <code>width</code> and <code>height</code> are
+ * non-negative integers. The constructors that allow you to create a dimension
+ * do not prevent you from setting a negative value for these properties. If the
+ * value of <code>width</code> or <code>height</code> is negative, the behavior
+ * of some methods defined by other objects is undefined.
+ * <p> 
  *
  * @author Sami Shaio
  * @author Arthur van Hoff
- * @author neXus
+ * @author teHneXus
  * @see java.awt.Component
  * @see java.awt.LayoutManager
  * @since 1.0

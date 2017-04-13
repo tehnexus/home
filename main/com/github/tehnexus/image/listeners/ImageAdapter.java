@@ -1,9 +1,9 @@
-package org.tehnexus.image.listeners;
+package com.github.tehnexus.image.listeners;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-import org.tehnexus.image.ImagePanel;
+import com.github.tehnexus.image.ImagePanel;
 
 public class ImageAdapter extends ComponentAdapter {
 

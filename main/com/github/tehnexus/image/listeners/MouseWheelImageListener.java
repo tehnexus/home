@@ -1,9 +1,9 @@
-package org.tehnexus.image.listeners;
+package com.github.tehnexus.image.listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseWheelEvent;
 
-import org.tehnexus.image.ImagePanel;
+import com.github.tehnexus.image.ImagePanel;
 
 public class MouseWheelImageListener implements java.awt.event.MouseWheelListener {
 

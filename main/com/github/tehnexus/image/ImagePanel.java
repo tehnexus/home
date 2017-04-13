@@ -1,4 +1,4 @@
-package org.tehnexus.image;
+package com.github.tehnexus.image;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,33 +11,32 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.tehnexus.awt.Dimension;
-import org.tehnexus.awt.ImageHelper;
+import com.github.tehnexus.awt.Dimension;
+import com.github.tehnexus.awt.ImageHelper;
+import com.github.tehnexus.image.listeners.ImageAdapter;
+import com.github.tehnexus.image.listeners.MouseWheelImageListener;
 
 public class ImagePanel extends JPanel {
 
-	private Dimension		maxSize;
 	private JLabel			imgLabel	= new JLabel();
 	private BufferedImage	image;
 
 	public ImagePanel() {
-	}
-	
-
-	public void initialize(Dimension maxSize) {
-		this.maxSize = maxSize;
 		init();
+	}
+
+	public void setImage(InputStream imageStream) throws IOException  {
+		image = ImageIO.read(imageStream);
+		imageStream.close();
+		imgLabel.setIcon(new ImageIcon(image));
 	}
 
 	private void init() {
 		setLayout(new BorderLayout());
 		setBackground(Color.MAGENTA);
 		add(imgLabel, BorderLayout.CENTER);
-	}
-
-	public void setImage(InputStream imageStream) throws IOException {
-		image = ImageIO.read(imageStream);
-		imageStream.close();
+		this.addComponentListener(new ImageAdapter(this));
+		this.addMouseWheelListener(new MouseWheelImageListener(this));
 	}
 
 	@Override
@@ -49,44 +48,11 @@ public class ImagePanel extends JPanel {
 		imgLabel.setIcon(new ImageIcon(ImageHelper.getScaledInstanceToFit(image, imgSize)));
 	}
 
-	public Dimension getDisplayedImageSize() {
-		return Dimension.fromImageIcon((ImageIcon) imgLabel.getIcon());
-	}
-
 	public boolean hasImage() {
 		return (image != null);
 	}
 
-	public void fit(SizeFit fitTo) {
-		switch (fitTo) {
-		case IMAGE:
-			// size of original image, converted to icon so no waiting for imageObserver
-			Dimension imgSize = Dimension.fromImageIcon(new ImageIcon(image));
-
-			// fit image size into max content size
-			imgSize.fitInto(maxSize);
-
-			// resize the image
-			resizeImage(imgSize);
-
-			break;
-		case NONE:
-			break;
-		case WINDOW:
-			
-			
-			
-			break;
-		default:
-			break;
-
-		}
-	}
-
-
 	public Dimension getImageSize() {
 		return Dimension.fromImageIcon((ImageIcon) imgLabel.getIcon());
 	}
-
-
 }

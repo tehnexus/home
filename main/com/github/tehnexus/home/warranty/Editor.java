@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty;
+package com.github.tehnexus.home.warranty;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -20,25 +20,24 @@ import javax.swing.JPanel;
 import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
 
-import org.tehnexus.awt.XFont;
-import org.tehnexus.home.util.Identifier;
-import org.tehnexus.home.util.Util;
-import org.tehnexus.home.warranty.classes.Product;
-import org.tehnexus.home.warranty.classes.Properties;
-import org.tehnexus.sqlite.SQLStrings;
-import org.tehnexus.sqlite.SQLUtil;
-import org.tehnexus.sqlite.SQLiteCon;
-import org.tehnexus.swing.XFormattedTextField;
-import org.tehnexus.swing.XLabel;
-import org.tehnexus.swing.XTextArea;
-import org.tehnexus.swing.XTextField;
-import org.tehnexus.swing.utils.Utils;
-
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePicker;
 import com.github.lgooddatepicker.components.TimePickerSettings;
 import com.github.lgooddatepicker.components.TimePickerSettings.TimeIncrement;
+import com.github.tehnexus.awt.XFont;
+import com.github.tehnexus.home.util.Identifier;
+import com.github.tehnexus.home.util.Util;
+import com.github.tehnexus.home.warranty.classes.Product;
+import com.github.tehnexus.home.warranty.classes.Properties;
+import com.github.tehnexus.sqlite.SQLStrings;
+import com.github.tehnexus.sqlite.SQLUtil;
+import com.github.tehnexus.sqlite.SQLiteCon;
+import com.github.tehnexus.swing.XFormattedTextField;
+import com.github.tehnexus.swing.XLabel;
+import com.github.tehnexus.swing.XTextArea;
+import com.github.tehnexus.swing.XTextField;
+import com.github.tehnexus.swing.utils.Utils;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -231,7 +230,7 @@ public class Editor extends JPanel {
 		datePicker.setFont(XFont.FONT_MONOSPACED);
 		datePickerButton = datePicker.getComponentToggleCalendarButton();
 		datePickerButton.setText("");
-
+		
 		URL dateImageURL = getClass().getClassLoader().getResource("images/datepickerbutton1.png");
 		Image dateExampleImage = Toolkit.getDefaultToolkit().getImage(dateImageURL);
 		ImageIcon dateExampleIcon = new ImageIcon(dateExampleImage);

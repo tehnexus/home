@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty.tree;
+package com.github.tehnexus.home.warranty.tree;
 
 public enum TreeStrings {
 

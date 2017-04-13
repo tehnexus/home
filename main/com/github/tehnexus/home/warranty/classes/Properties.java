@@ -1,11 +1,11 @@
-package org.tehnexus.home.warranty.classes;
+package com.github.tehnexus.home.warranty.classes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.tehnexus.home.util.Identifier;
-import org.tehnexus.home.util.Util;
+import com.github.tehnexus.home.util.Identifier;
+import com.github.tehnexus.home.util.Util;
 
 public class Properties extends HashMap<Integer, Property> {
 

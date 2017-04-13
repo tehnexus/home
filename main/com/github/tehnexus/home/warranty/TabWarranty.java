@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty;
+package com.github.tehnexus.home.warranty;
 
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
@@ -15,13 +15,13 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 
-import org.tehnexus.awt.XFont;
-import org.tehnexus.home.util.Identifier;
-import org.tehnexus.home.warranty.classes.Properties;
-import org.tehnexus.home.warranty.tree.TreePanel;
-import org.tehnexus.sqlite.SQLStrings;
-import org.tehnexus.sqlite.SQLUtil;
-import org.tehnexus.sqlite.SQLiteCon;
+import com.github.tehnexus.awt.XFont;
+import com.github.tehnexus.home.util.Identifier;
+import com.github.tehnexus.home.warranty.classes.Properties;
+import com.github.tehnexus.home.warranty.tree.TreePanel;
+import com.github.tehnexus.sqlite.SQLStrings;
+import com.github.tehnexus.sqlite.SQLUtil;
+import com.github.tehnexus.sqlite.SQLiteCon;
 
 public class TabWarranty extends JPanel {
 

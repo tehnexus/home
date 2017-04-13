@@ -1,11 +1,11 @@
-package org.tehnexus.home.warranty;
+package com.github.tehnexus.home.warranty;
 
 import java.awt.Component;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.home.warranty.classes.Property;
 
 public class ComboTableCellRenderer extends DefaultTableCellRenderer {
 

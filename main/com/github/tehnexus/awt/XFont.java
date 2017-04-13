@@ -1,4 +1,4 @@
-package org.tehnexus.awt;
+package com.github.tehnexus.awt;
 
 import java.awt.Font;
 

@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty;
+package com.github.tehnexus.home.warranty;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -10,7 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import org.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.home.warranty.classes.Property;
 
 public class ComboCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 

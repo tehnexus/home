@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tehnexus.filetypedetector;
+package com.github.tehnexus.filetypedetector;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.tehnexus.util.Charsets;
+import com.github.tehnexus.util.Charsets;
 
 /**
  * Examines the a file's first bytes and estimates the file's type.

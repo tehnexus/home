@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty;
+package com.github.tehnexus.home.warranty;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,9 +12,9 @@ import javax.swing.JComboBox;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.event.ListDataListener;
 
-import org.tehnexus.home.warranty.classes.Properties;
-import org.tehnexus.home.warranty.classes.Property;
-import org.tehnexus.swing.XSeparator;
+import com.github.tehnexus.home.warranty.classes.Properties;
+import com.github.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.swing.XSeparator;
 
 public class PropertyComboBox extends JComboBox<Property> {
 

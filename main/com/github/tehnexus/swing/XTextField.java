@@ -1,4 +1,4 @@
-package org.tehnexus.swing;
+package com.github.tehnexus.swing;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,7 +6,7 @@ import java.awt.Font;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.tehnexus.awt.XFont;
+import com.github.tehnexus.awt.XFont;
 
 public class XTextField extends JTextField {
 

@@ -1,11 +1,11 @@
-package org.tehnexus.swing;
+package com.github.tehnexus.swing;
 
 import java.awt.Font;
 
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
-import org.tehnexus.awt.XFont;
+import com.github.tehnexus.awt.XFont;
 
 public class XFormattedTextField extends JFormattedTextField {
 

@@ -1,4 +1,4 @@
-package org.tehnexus.awt;
+package com.github.tehnexus.awt;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

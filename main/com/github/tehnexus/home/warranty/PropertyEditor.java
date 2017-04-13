@@ -1,4 +1,4 @@
-package org.tehnexus.home.warranty;
+package com.github.tehnexus.home.warranty;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -19,11 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.text.MaskFormatter;
 
-import org.tehnexus.awt.XFont;
-import org.tehnexus.home.warranty.classes.Properties;
-import org.tehnexus.home.warranty.classes.Property;
-import org.tehnexus.swing.XFormattedTextField;
-import org.tehnexus.swing.XLabel;
+import com.github.tehnexus.awt.XFont;
+import com.github.tehnexus.home.warranty.classes.Properties;
+import com.github.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.swing.XFormattedTextField;
+import com.github.tehnexus.swing.XLabel;
 
 import net.miginfocom.swing.MigLayout;
 

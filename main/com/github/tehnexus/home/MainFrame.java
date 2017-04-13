@@ -1,4 +1,4 @@
-package org.tehnexus.home;
+package com.github.tehnexus.home;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,7 +15,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
-import org.tehnexus.home.warranty.TabWarranty;
+import com.github.tehnexus.home.warranty.TabWarranty;
 
 /**
  * @author neXus
