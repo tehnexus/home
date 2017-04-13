@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="main"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/LGoodDatePicker"/>
+	<classpathentry kind="lib" path="D:/prg/Java/lib/jar/commons-logging-1.2/commons-logging-1.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/D:/prg/Java/lib/jar/commons-logging-1.2/commons-logging-1.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/prg/Java/lib/jar/pdfbox-2.0.5/pdfbox-2.0.5.jar" sourcepath="D:/prg/Java/lib/jar/pdfbox-2.0.5/sources/pdfbox-2.0.5-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="https://pdfbox.apache.org/docs/2.0.5/javadocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/prg/Java/lib/jar/pdfbox-2.0.5/fontbox-2.0.5.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://pdfbox.apache.org/docs/2.0.5/javadocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/prg/Java/lib/jar/SQLite/sqlite-jdbc-3.16.1.jar"/>
+	<classpathentry kind="lib" path="D:/prg/Java/lib/jar/MigLayout/miglayout15-swing.jar" sourcepath="D:/prg/Java/lib/jar/MigLayout/miglayout-src.zip"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
