@@ -2,19 +2,11 @@ package com.github.tehnexus.home.warranty;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.github.tehnexus.awt.Dimension;
 import com.github.tehnexus.filetypedetector.FileType;
@@ -22,8 +14,6 @@ import com.github.tehnexus.filetypedetector.FileTypeDetector;
 import com.github.tehnexus.home.util.Util;
 import com.github.tehnexus.home.warranty.classes.Attachment;
 import com.github.tehnexus.image.ImagePanel;
-import com.github.tehnexus.image.listeners.ImageAdapter;
-import com.github.tehnexus.image.listeners.MouseWheelImageListener;
 import com.github.tehnexus.sqlite.SQLUtil;
 
 public class AttachmentViewer extends JDialog {
@@ -69,7 +59,7 @@ public class AttachmentViewer extends JDialog {
 		
 		panImage = new ImagePanel();
 		add(panImage, BorderLayout.CENTER);
-
+		pack();
 //		windowSizeMax = new Dimension(screenSize.getWidth() - Dimension.FRAME_MARGIN_HORIZONTAL,
 //				screenSize.getHeight() - Dimension.FRAME_MARGIN_VERTICAL);
 //		setSize(windowSizeMax);
@@ -143,7 +133,7 @@ public class AttachmentViewer extends JDialog {
 	}
 
 	private void setUpWindow() {
-		this.setMinimumSize(new Dimension(100, 100));
+		setMinimumSize(new Dimension(1050,1050));
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		setLocationRelativeTo(null);
 	}
@@ -199,7 +189,7 @@ public class AttachmentViewer extends JDialog {
 	
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(1000, 900);
+		return new Dimension(1050, 1050);
 	}
 
 }

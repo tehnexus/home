@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -36,7 +35,7 @@ public class AttachmentTable extends JDialog {
 	private AttachmentTableModel tableModel;
 	private HashMap<Integer, LoadAttachmentViewerWorker> workers = new HashMap<>(0);
 	private HashMap<Integer, AttachmentViewer> finishedWorkers = new HashMap<>(0);
-	private JButton btnExport = new JButton("Export");
+//	private JButton btnExport = new JButton("Export");
 
 	// private AttachmentViewer attViewer;
 
@@ -77,7 +76,7 @@ public class AttachmentTable extends JDialog {
 		table.setRowHeight(25);
 		JScrollPane scrollPane = new JScrollPane(table);
 		add(scrollPane, BorderLayout.CENTER);
-		add(btnExport, BorderLayout.NORTH);
+//		add(btnExport, BorderLayout.NORTH);
 
 		// getting all possible values for type combo
 		Properties allAttachTypes = properties.getTypes(Identifier.ATTACHMENT).getTypes(Identifier.ATTACHMENTTYPE);

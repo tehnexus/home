@@ -7,15 +7,16 @@ import com.github.tehnexus.image.ImagePanel;
 
 public class ImageAdapter extends ComponentAdapter {
 
-	private final ImagePanel component;
-	
-	public ImageAdapter(ImagePanel component) {
-		this.component = component;
+	private final ImagePanel panImage;
+
+	public ImageAdapter(ImagePanel panImage) {
+		this.panImage = panImage;
 	}
-	
+
 	@Override
 	public void componentResized(ComponentEvent e) {
-		System.out.println("imagepanel resized, image: " + component.hasImage());
+		if (panImage.hasImage())
+			panImage.setImageLocation();
 	}
-	
+
 }

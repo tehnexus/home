@@ -139,5 +139,10 @@ public class Dimension extends java.awt.Dimension {
 			setSize(dimensionFit.getWidth(), getHeight() * f);
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return width + " x " + height;
+	}
 
 }

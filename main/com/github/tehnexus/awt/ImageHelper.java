@@ -17,6 +17,10 @@ public class ImageHelper extends BufferedImage {
 		super(width, height, type);
 	}
 
+	public static BufferedImage getScaledInstanceToFit(BufferedImage img, double scaleFactor) {
+		return getScaledInstance(img, scaleFactor);
+	}
+
 	public static BufferedImage getScaledInstanceToFit(BufferedImage img, Dimension size) {
 		double scaleFactor = getScaleFactorToFit(img, size);
 		return getScaledInstance(img, scaleFactor);
@@ -29,14 +33,13 @@ public class ImageHelper extends BufferedImage {
 		int iImageWidth = (int) Math.round(img.getWidth() * dScaleFactor);
 		int iImageHeight = (int) Math.round(img.getHeight() * dScaleFactor);
 
-		// System.out.println("Scale Size = " + iImageWidth + "x" + iImageHeight);
+		// System.out.println("Scale Size = " + iImageWidth + "x" +
+		// iImageHeight);
 		if (dScaleFactor < 1.0d) {
 			imgScale = getScaledDownInstance(img, iImageWidth, iImageHeight);
-		}
-		else if (dScaleFactor > 1.0d) {
+		} else if (dScaleFactor > 1.0d) {
 			imgScale = getScaledUpInstance(img, iImageWidth, iImageHeight);
-		}
-		else {
+		} else {
 			imgScale = img;
 		}
 		return imgScale;
@@ -78,10 +81,8 @@ public class ImageHelper extends BufferedImage {
 				g2.dispose();
 
 				ret = tmp;
-			}
-			while (w != targetWidth || h != targetHeight);
-		}
-		else {
+			} while (w != targetWidth || h != targetHeight);
+		} else {
 			ret = new BufferedImage(1, 1, type);
 		}
 		return ret;
@@ -119,8 +120,7 @@ public class ImageHelper extends BufferedImage {
 
 			ret = tmp;
 			tmp = null;
-		}
-		while (w != targetWidth || h != targetHeight);
+		} while (w != targetWidth || h != targetHeight);
 
 		return ret;
 	}
@@ -159,10 +159,12 @@ public class ImageHelper extends BufferedImage {
 		return dScale;
 	}
 
-	// private static double getScaleFactorToFill(Dimension masterSize, Dimension targetSize) {
+	// private static double getScaleFactorToFill(Dimension masterSize,
+	// Dimension targetSize) {
 	//
 	// double dScaleWidth = getScaleFactor(masterSize.width, targetSize.width);
-	// double dScaleHeight = getScaleFactor(masterSize.height, targetSize.height);
+	// double dScaleHeight = getScaleFactor(masterSize.height,
+	// targetSize.height);
 	//
 	// double dScale = Math.max(dScaleHeight, dScaleWidth);
 	// return dScale;
