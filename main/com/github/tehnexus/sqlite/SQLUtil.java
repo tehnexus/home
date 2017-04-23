@@ -14,6 +14,7 @@ public class SQLUtil {
 				ResultSet rs = connectionSQLite.executeQuery(sql)) {
 
 			if (rs.next()) { // check if record exists, if yes use it
+//				InputStream is = rs.getBinaryStream("Attachment");
 				return rs.getBinaryStream("Attachment");
 			}
 		}

@@ -2,11 +2,25 @@ package com.github.tehnexus.home.warranty;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 
 import com.github.tehnexus.awt.Dimension;
 import com.github.tehnexus.filetypedetector.FileType;
@@ -14,182 +28,189 @@ import com.github.tehnexus.filetypedetector.FileTypeDetector;
 import com.github.tehnexus.home.util.Util;
 import com.github.tehnexus.home.warranty.classes.Attachment;
 import com.github.tehnexus.image.ImagePanel;
+import com.github.tehnexus.image.SizeFit;
+import com.github.tehnexus.sqlite.SQLStrings;
 import com.github.tehnexus.sqlite.SQLUtil;
 
 public class AttachmentViewer extends JDialog {
 
-//	private final Dimension		screenSize		= new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
-//	private Dimension			windowSizeMax;
+	private Attachment		attach;
+	private ImagePanel		panImage;
 
-//	private Dimension			contentSizeMax;
-//	private Dimension			contentMargin;
+	private JButton			btnExport		= new JButton("Export");
+	private JButton			btnReset		= new JButton("Reset");
+	private JButton			btnFitPanel		= new JButton("Fit Window");
+	private JButton			btnClose		= new JButton("Close");
 
-	private ImagePanel			panImage;
-//	private JPanel				panNorth		= new JPanel(new BorderLayout());
-//	private JButton				btnExport		= new JButton("Export");
-//	private JButton				btnReset		= new JButton("Reset");
-//	private JButton				btnClose		= new JButton("Close");
+	private ActionListener	actionListener	= new ActionListener();
 
-//	private ActionListener		actionListener	= new ActionListener();
+	public Attachment getAttachment() {
+		return attach;
+	}
 
-//	private final JFileChooser	fc				= new JFileChooser();
+	public byte[] getFile() {
+		BufferedImage img = panImage.getImage(true);
+
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			ImageIO.write(img, "png", baos);
+			return baos.toByteArray();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public AttachmentViewer() {
+		createGUI();
+		importUserFile();
+		setUpWindow();
+	}
 
 	public AttachmentViewer(Attachment attach) throws IOException, SQLException {
+		this.attach = attach;
 
 		createGUI();
 		load(attach);
 		setUpWindow();
-		
-		
-//		if (attach != null) {
-//			
-//		} else {
-////			setSize(new Dimension(500, 600));
-////			if (getUserFile() == null) {
-////				dispose();
-////				return;
-////			}
-//		}
-		
+	}
+
+	private void importUserFile() {
+		File file = getUserFile();
+		if (file != null) {
+			try (BufferedInputStream bis = new BufferedInputStream(
+					Files.newInputStream(file.toPath(), StandardOpenOption.READ))) {
+				FileType fileType = FileTypeDetector.detectFileType(bis);
+				if (Util.isAnyOf(fileType, FileType.PNG, FileType.JPEG)) {
+					panImage.setImage(bis);
+				}
+				else if (fileType == FileType.PDF) {
+
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			dispose();
+		}
+	}
+
+	public boolean hasValidFile() {
+		return panImage.hasImage();
+	}
+
+	private File getUserFile() {
+		JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showOpenDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			return file;
+		}
+		return null;
 	}
 
 	private void createGUI() {
 
 		setLayout(new BorderLayout());
-		
+
 		panImage = new ImagePanel();
 		add(panImage, BorderLayout.CENTER);
+
+		JPanel panNorth = new JPanel(new BorderLayout());
+		JPanel panSouth = new JPanel(new BorderLayout());
+
+		add(panNorth, BorderLayout.PAGE_START);
+		add(panSouth, BorderLayout.PAGE_END);
+
+		panNorth.add(btnFitPanel, BorderLayout.LINE_START);
+		panNorth.add(btnReset, BorderLayout.LINE_END);
+
+		panSouth.add(btnExport, BorderLayout.LINE_START);
+		panSouth.add(btnClose, BorderLayout.LINE_END);
+
+		btnFitPanel.addActionListener(actionListener);
+		btnExport.addActionListener(actionListener);
+		btnReset.addActionListener(actionListener);
+		btnClose.addActionListener(actionListener);
+
+		btnFitPanel.setFocusable(false);
+		btnExport.setFocusable(false);
+		btnReset.setFocusable(false);
+		btnClose.setFocusable(false);
+
 		pack();
-//		windowSizeMax = new Dimension(screenSize.getWidth() - Dimension.FRAME_MARGIN_HORIZONTAL,
-//				screenSize.getHeight() - Dimension.FRAME_MARGIN_VERTICAL);
-//		setSize(windowSizeMax);
-//		pack();
-//		contentMargin = new Dimension(getWidth() - panImage.getWidth(), getHeight() - panImage.getHeight());
-//
-//		contentSizeMax = new Dimension(windowSizeMax.getWidth() - contentMargin.getWidth(),
-//				windowSizeMax.getHeight() - contentMargin.getHeight());
-
-//		panImage.initialize(contentSizeMax);
-
-//		add(panNorth, BorderLayout.PAGE_START);
-//		panNorth.add(btnExport, BorderLayout.LINE_START);
-//		panNorth.add(btnReset, BorderLayout.LINE_END);
-//		add(btnClose, BorderLayout.PAGE_END);
-//
-//		btnExport.addActionListener(actionListener);
-//		btnReset.addActionListener(actionListener);
-//		btnClose.addActionListener(actionListener);
-//
-//		btnExport.setFocusable(false);
-//		btnReset.setFocusable(false);
-//		btnClose.setFocusable(false);
-
-//		panImage.addComponentListener(new ImageAdapter(panImage));
-//		panImage.addMouseWheelListener(new MouseWheelImageListener(panImage));
 		panImage.grabFocus();
 
 	}
 
-//	private File getUserFile() {
-//		int returnVal = fc.showOpenDialog(this);
-//		if (returnVal == JFileChooser.APPROVE_OPTION) {
-//			File file = fc.getSelectedFile();
-//			return file;
-//		}
-//		return null;
-//	}
-
 	private void load(Attachment attach) throws IOException, SQLException {
 
-		InputStream inputStream = SQLUtil
-				.blobFromDatabase("SELECT Attachment FROM tblAttachment WHERE ID=" + attach.getId());
-		FileType fileType = FileTypeDetector.detectFileType(inputStream);
+		try (InputStream inputStream = SQLUtil.blobFromDatabase(SQLStrings.queryAttachments(attach.getId()))) {
+			System.out.println("");
+			FileType fileType = FileTypeDetector.detectFileType(inputStream);
 
-		if (Util.isAnyOf(fileType, FileType.PNG, FileType.JPEG)) {
-
-			panImage.setImage(inputStream);
-			// updateImage(SizeFit.IMAGE);
-
-		} else if (fileType == FileType.PDF) {
-//			try (PDDocument document = PDDocument.load(inputStream)) {
-
+			if (Util.isAnyOf(fileType, FileType.PNG, FileType.JPEG)) {
+				panImage.setImage(inputStream);
+			}
+			else if (fileType == FileType.PDF) {
+				// try (PDDocument document = PDDocument.load(inputStream)) {
+				//
+				// PDPageTree pages = document.getDocumentCatalog().getPages();
+				// PDPage page = pages.get(0);
+				//
+				// System.out.println("");
 				// PDFRenderer pdfRenderer = new PDFRenderer(document);
 				// int pageCounter = 0;
 				// for (PDPage page : document.getPages()) {
 				// // note that the page number parameter is zero based
-				// BufferedImage bim =
-				// pdfRenderer.renderImageWithDPI(pageCounter++, 300,
-				// ImageType.RGB);
+				// BufferedImage bm =
+				// pdfRenderer.renderImageWithDPI(pageCounter++,
+				// 300, ImageType.RGB);
 				// System.out.println("");
+				//
 				// // suffix in filename will be used as the file format
-				// // ImageIOUtil.writeImage(bim, pdfFilename + "-" +
-				// (pageCounter++) + ".png",
-				// // 300);
+				// ImageIOUtil.writeImage(bm, pdfFilename + "-" +
+				// (pageCounter++) +
+				// ".png", 300);
 				// }
-//			}
-		} else {
-			throw new IOException("File type not supported.");
+				// }
+			}
+			else {
+				throw new IOException("File type not supported: " + fileType.toString());
+			}
 		}
 	}
 
 	private void setUpWindow() {
-		setMinimumSize(new Dimension(1050,1050));
+		setMinimumSize(new Dimension(500, 500));
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		setLocationRelativeTo(null);
 	}
 
-	// @SuppressWarnings("incomplete-switch")
-	// private void updateImage(SizeFit fitTo) {
-	//
-	// panImage.fit(fitTo);
-	// // TODO: resize this window according to img
-	// Dimension imgSize = panImage.getImageSize();
-	// Dimension windowSizeNew = new Dimension(imgSize.getWidth() +
-	// contentMargin.getWidth(),
-	// imgSize.getHeight() + contentMargin.getHeight());
-	// setSize(windowSizeNew);
-	//
-	// switch (fitTo) {
-	// case WINDOW:
-	// // maximum size if image to display based on window size
-	//// contentSizeMax = new Dimension(getWidth() - contentMargin.getWidth(),
-	//// getHeight() - contentMargin.getHeight());
-	////
-	//// // resize the image
-	//// panImage.resizeImage(contentSizeMax);
-	////
-	//// // size of displayed image
-	//// imgSize = panImage.getDisplayedImageSize();
-	////
-	//// // resize window
-	//// windowSizeNew = new Dimension(imgSize.getWidth() +
-	// contentMargin.getWidth(),
-	//// imgSize.getHeight() + contentMargin.getHeight());
-	//// setSize(windowSizeNew);
-	//
-	// break;
-	//
-	// case NONE:
-	//
-	// break;
-	// }
-	// }
+	private class ActionListener implements java.awt.event.ActionListener {
 
-//	private class ActionListener implements java.awt.event.ActionListener {
-//
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//			if (e.getSource().equals(btnClose)) {
-//				dispose();
-//			} else if (e.getSource().equals(btnReset)) {
-//				// updateImage(SizeFit.IMAGE);
-//			}
-//		}
-//	}
-	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource().equals(btnClose)) {
+				dispose();
+			}
+			else if (e.getSource().equals(btnReset)) {
+				panImage.fitImage(SizeFit.IMAGE);
+			}
+			else if (e.getSource().equals(btnExport)) {
+				// TODO: export it!
+			}
+			else if (e.getSource().equals(btnFitPanel)) {
+				panImage.fitImage(SizeFit.WINDOW);
+			}
+		}
+	}
+
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(1050, 1050);
+		return new Dimension(500, 500);
 	}
 
 }

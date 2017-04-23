@@ -2,6 +2,7 @@ package com.github.tehnexus.image;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -19,25 +20,28 @@ import com.github.tehnexus.image.listeners.XMouseAdapter;
 
 public class ImagePanel extends JPanel {
 
-	private Point			location;
-	private BufferedImage	imageOriginal;
-	private BufferedImage	image;
+	private static final int	MARGIN_PX	= 20;
+
+	private Point				location;
+	private BufferedImage		imageOriginal;
+	private BufferedImage		image;
 
 	public ImagePanel() {
 		init();
 	}
 
-	public BufferedImage getImage() {
+	public BufferedImage getImage(boolean original) {
+		if (original)
+			return imageOriginal;
+
 		return image;
 	}
 
 	public Point getImageLocation() {
+		if (location == null)
+			return new Point(0, 0);
 		return location;
 	}
-
-	// public Dimension getImageSize() {
-	// return new Dimension(image.getWidth(), image.getHeight());
-	// }
 
 	@Override
 	public Dimension getSize() {
@@ -53,13 +57,24 @@ public class ImagePanel extends JPanel {
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 
-		this.addComponentListener(new ImageAdapter(this));
+		addComponentListener(new ImageAdapter(this));
 		XMouseAdapter ma = new XMouseAdapter(this);
-		this.addMouseListener(ma);
-		this.addMouseMotionListener(ma);
-		this.addMouseWheelListener(ma);
+		addMouseListener(ma);
+		addMouseMotionListener(ma);
+		addMouseWheelListener(ma);
 
-		this.grabFocus();
+		grabFocus();
+	}
+
+	private void initImageLocation() {
+
+		Dimension pan = new Dimension(getWidth(), getHeight());
+		Dimension img = new Dimension(image.getWidth(), image.getHeight());
+
+		int x = pan.width > img.width ? (pan.width - img.width) / 2 : 0;
+		int y = pan.height > img.height ? (pan.height - img.height) / 2 : 0;
+
+		setImageLocation(x, y);
 	}
 
 	@Override
@@ -69,69 +84,83 @@ public class ImagePanel extends JPanel {
 		g2D.drawImage(image, location.x, location.y, this);
 	}
 
-	public void setImage(InputStream imageStream) throws IOException {
-		imageOriginal = ImageIO.read(imageStream);
-		imageStream.close();
-		image = imageOriginal;
+	public void resizeImage(double scaleFactor) {
 
-		Dimension pan = new Dimension(getWidth(), getHeight());
-		Dimension img = new Dimension(image.getWidth(), image.getHeight());
+		setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
-		int x = pan.width > img.width ? (pan.width - img.width) / 2 : 0;
-		int y = pan.height > img.height ? (pan.height - img.height) / 2 : 0;
+		if (scaleFactor == 0d) { // fit window
+			Dimension panDim = new Dimension(getWidth() - MARGIN_PX, getHeight() - MARGIN_PX);
+			Dimension imgDim = new Dimension(image.getWidth(), image.getHeight());
+			imgDim.fitInto(panDim); // TODO: rewrite so fitInto also works for
+									// increasing size of img
+			image = ImageHelper.getScaledInstanceToFit(imageOriginal, imgDim);
+		}
+		else { // according to zoom level
+			double scaleX = (double) (image.getWidth()) / imageOriginal.getWidth();
+			double scale = scaleFactor > 0 ? scaleX * scaleFactor : scaleX / Math.abs(scaleFactor);
+			image = ImageHelper.getScaledInstanceToFit(imageOriginal, scale);
+		}
 
-		setImageLocation(x, y);
-		return;
+		validateImageLocation();
+		setCursor(Cursor.getDefaultCursor());
 	}
 
-	public void setImageLocation() {
+	public void setImage(InputStream inputStream) throws IOException {
+		imageOriginal = ImageIO.read(inputStream);
+		image = imageOriginal;
+
+		initImageLocation();
+	}
+
+	public void validateImageLocation() {
 		setImageLocation(location.x, location.y);
 	}
 
-	public void setImageLocation(int x, int y) {
-		// Prevent user from moving image out of screen
-		// x = image.getWidth() + x < getWidth() ? location.x : x;
-		// y = image.getHeight() + y < getHeight() ? location.y : y;
+	public void fitImage(SizeFit fit) {
+		switch (fit) {
+			case IMAGE:
+				image = imageOriginal;
+				initImageLocation();
+				break;
+			case NONE:
+				break;
+			case WINDOW:
+				resizeImage(0d);
+				break;
+			default:
+				break;
 
-		// Move image if window is resized
-		// x = getWidth() > image.getWidth() + x ? x + getWidth() -
-		// (image.getWidth() + x) : x;
-		// y = getHeight() > image.getHeight() + y ? y + getHeight() -
-		// (image.getHeight() + y) : y;
+		}
+	}
 
-		// Prevent user from moving image out of screen
-		// x = x > 0 ? 0 : x;
-		// y = y > 0 ? 0 : y;
+	public boolean setImageLocation(int x, int y) {
+
+		Dimension panDim = new Dimension(getWidth(), getHeight());
+		Dimension imgDim = new Dimension(image.getWidth(), image.getHeight());
+
+		// moved in
+		x = x > MARGIN_PX ? MARGIN_PX : x;
+		y = y > MARGIN_PX ? MARGIN_PX : y;
+
+		// moved out
+		x = imgDim.width + x + MARGIN_PX < getWidth() ? x + Math.abs(imgDim.width + x - getWidth()) - MARGIN_PX : x;
+		y = imgDim.height + y + MARGIN_PX < getHeight() ? y + Math.abs(imgDim.height + y - getHeight()) - MARGIN_PX : y;
+
+		// center image if image smaller than panel
+		x = panDim.width > imgDim.width ? (panDim.width - imgDim.width) / 2 : x;
+		y = panDim.height > imgDim.height ? (panDim.height - imgDim.height) / 2 : y;
+
+		Point pOld = getImageLocation();
+		Point pNew = new Point(x, y);
 
 		setImageLocation(new Point(x, y));
+
+		boolean b = (pOld.x == pNew.x && pOld.y == pNew.y) ? true : false;
+		return b;
 	}
 
 	private void setImageLocation(Point p) {
 		location = p;
-	}
-
-	// private void setSize(Dimension imgSize) {
-	// image = ImageHelper.getScaledInstanceToFit(image, imgSize);
-	// }
-
-	public void resizeImage(double scaleFactor) {
-
-		Dimension sizeO = new Dimension(imageOriginal.getWidth(), imageOriginal.getHeight());
-		Dimension size = new Dimension(image.getWidth(), image.getHeight());
-
-		double scaleX = (double) (size.width) / sizeO.width;
-
-		double scale = scaleFactor > 0 ? scaleX * scaleFactor : scaleX / Math.abs(scaleFactor);
-
-		System.out.println("scaleX: " + scaleX + " - scale: " + scale);
-
-		// size.setSize(size.width * scaleFactor / 100, size.height *
-		// scaleFactor / 100);
-
-		// setSize(size);
-
-		// image = ImageHelper.getScaledInstanceToFit(image, imgSize);
-		image = ImageHelper.getScaledInstanceToFit(imageOriginal, scale);
 		repaint();
 	}
 

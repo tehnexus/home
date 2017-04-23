@@ -2,10 +2,6 @@ package com.github.tehnexus.sqlite;
 
 public class SQLStrings {
 
-	public static String deleteFromtblManufacturer() {
-		return "";
-	}
-
 	public static String deleteFromtblProduct() {
 		return "DELETE FROM tblProduct WHERE ID=?";
 	}
@@ -14,8 +10,8 @@ public class SQLStrings {
 		return "DELETE FROM tblProductProperties WHERE ProductID=?";
 	}
 
-	public static String deleteFromtblShop() {
-		return "";
+	public static String insertIntotblAttachment() {
+		return "INSERT INTO tblAttachment(ID,ProductID,TypeID,Attachment,Comment) VALUES(?,?,?,?,?)";
 	}
 
 	public static String insertIntotblProduct() {
@@ -24,7 +20,7 @@ public class SQLStrings {
 	}
 
 	public static String insertIntotblProductProperties() {
-		return "INSERT INTO tblProductProperties(ProductID,ManufacturerID,ShopID,PaymentID)" + " VALUES(?,?,?,?)";
+		return "INSERT INTO tblProductProperties(ProductID,ManufacturerID,ShopID,PaymentID) VALUES(?,?,?,?)";
 	}
 
 	public static String insertIntotblShop() {
@@ -35,28 +31,16 @@ public class SQLStrings {
 		return "INSERT INTO tblShopProperties(ShopID,TypeID) VALUES(?,?)";
 	}
 
-	public static String interIntotblManufacturer() {
-		return "";
-	}
-
-	public static String interIntotblShop() {
-		return "";
-	}
-
-	public static String intertIntotblProductProperties() {
-		return "";
-	}
-
 	public static String queryAttachments() {
 		return "SELECT * FROM tblAttachment";
+	}
+	
+	public static String queryAttachments(int id) {
+		return "SELECT Attachment FROM tblAttachment WHERE ID=" + id;
 	}
 
 	public static String queryAttachmentTypes() {
 		return "SELECT * FROM tblAttachmentType";
-	}
-
-	public static String queryDefault() {
-		return "SELECT * FROM vw_default_all";
 	}
 
 	public static String queryManufacturers() {
@@ -81,10 +65,6 @@ public class SQLStrings {
 		return "SELECT * FROM tblShopType";
 	}
 
-	public static String updatetblManufacturer() {
-		return "";
-	}
-
 	public static String updatetblProduct() {
 		return "UPDATE tblProduct SET Name=?,Description=?,Serial=?, "
 				+ "Date=?,Warranty=?,Price=?,[Order]=?,Invoice=?,Customer=?,Comment=? WHERE ID=?";
@@ -94,7 +74,4 @@ public class SQLStrings {
 		return "UPDATE tblProductProperties SET ManufacturerID=?,ShopID=?,PaymentID=? WHERE ProductID=?";
 	}
 
-	public static String updatetblShop() {
-		return "";
-	}
 }

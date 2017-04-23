@@ -43,7 +43,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class Editor extends JPanel {
 
-	public static String		PLACEHOLDER_NEW		= "  add new ...";
+	public final static String	PLACEHOLDER_NEW		= "  add new ...";
 
 	private XFormattedTextField	ftxtID;
 	private XTextField			txtFullname;
@@ -216,7 +216,7 @@ public class Editor extends JPanel {
 
 		btnDelete.addActionListener(buttonListener);
 		add(btnDelete, "cell 1 17,grow");
-		
+
 		btnSave.addActionListener(buttonListener);
 		add(btnSave, "cell 2 17 5 1,grow");
 
@@ -230,7 +230,7 @@ public class Editor extends JPanel {
 		datePicker.setFont(XFont.FONT_MONOSPACED);
 		datePickerButton = datePicker.getComponentToggleCalendarButton();
 		datePickerButton.setText("");
-		
+
 		URL dateImageURL = getClass().getClassLoader().getResource("images/datepickerbutton1.png");
 		Image dateExampleImage = Toolkit.getDefaultToolkit().getImage(dateImageURL);
 		ImageIcon dateExampleIcon = new ImageIcon(dateExampleImage);
@@ -413,47 +413,47 @@ public class Editor extends JPanel {
 		public void propertyChange(PropertyChangeEvent pce) {
 			switch (pce.getPropertyName()) {
 
-			case "propertyEdit":
-				if (pce.getNewValue().equals(btnAttachment)) {
-					AttachmentTable attEdit = new AttachmentTable(products, currentTreeSelection);
-					attEdit.setVisible(true);
-				}
+				case "propertyEdit":
+					if (pce.getNewValue().equals(btnAttachment)) {
+						AttachmentTable attEdit = new AttachmentTable(products, currentTreeSelection);
+						attEdit.setVisible(true);
+					}
 
-				// propEdit = new PropertyEditor(cboManu.getSelected());
-				// propEdit.setVisible(true);
-				// // next line is only run is dialog is closed
-				// if (!propEdit.isWindowExited())
-				// cboManu.setSelectedProductProperty(propEdit.getProductProperty());
-				break;
-
-			case "propertyNew":
-				Properties props = (Properties) pce.getNewValue();
-				switch (props.getIdentifier()) {
-				case SHOP:
-					System.out.println("SHOP");
+					// propEdit = new PropertyEditor(cboManu.getSelected());
+					// propEdit.setVisible(true);
+					// // next line is only run is dialog is closed
+					// if (!propEdit.isWindowExited())
+					// cboManu.setSelectedProductProperty(propEdit.getProductProperty());
 					break;
-				case PAYMENT:
-					System.out.println("PAYMENT");
+
+				case "propertyNew":
+					Properties props = (Properties) pce.getNewValue();
+					switch (props.getIdentifier()) {
+						case SHOP:
+							System.out.println("SHOP");
+							break;
+						case PAYMENT:
+							System.out.println("PAYMENT");
+							break;
+						case MANUFACTURER:
+							System.out.println("MANUFACTURER");
+							break;
+					}
+
+					PropertyEditor propEdit = new PropertyEditor(props);
+					propEdit.setVisible(true);
+					// next line is only run is dialog is closed
+					if (!propEdit.isWindowExited()) {
+						// cboShop.addProductProperty(propEdit.getProductProperty());
+						// cboShop.setSelectedProductProperty(propEdit.getProductProperty());
+						cboShop.repaint();
+					}
+
 					break;
-				case MANUFACTURER:
-					System.out.println("MANUFACTURER");
+
+				default:
+					// System.out.println(pce.getPropertyName());
 					break;
-				}
-
-				PropertyEditor propEdit = new PropertyEditor(props);
-				propEdit.setVisible(true);
-				// next line is only run is dialog is closed
-				if (!propEdit.isWindowExited()) {
-					// cboShop.addProductProperty(propEdit.getProductProperty());
-					// cboShop.setSelectedProductProperty(propEdit.getProductProperty());
-					cboShop.repaint();
-				}
-
-				break;
-
-			default:
-				// System.out.println(pce.getPropertyName());
-				break;
 			}
 		}
 

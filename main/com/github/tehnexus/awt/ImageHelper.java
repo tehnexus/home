@@ -37,9 +37,11 @@ public class ImageHelper extends BufferedImage {
 		// iImageHeight);
 		if (dScaleFactor < 1.0d) {
 			imgScale = getScaledDownInstance(img, iImageWidth, iImageHeight);
-		} else if (dScaleFactor > 1.0d) {
+		}
+		else if (dScaleFactor > 1.0d) {
 			imgScale = getScaledUpInstance(img, iImageWidth, iImageHeight);
-		} else {
+		}
+		else {
 			imgScale = img;
 		}
 		return imgScale;
@@ -82,7 +84,8 @@ public class ImageHelper extends BufferedImage {
 
 				ret = tmp;
 			} while (w != targetWidth || h != targetHeight);
-		} else {
+		}
+		else {
 			ret = new BufferedImage(1, 1, type);
 		}
 		return ret;

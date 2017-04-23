@@ -12,6 +12,9 @@ public class Attachment extends Property {
 
 		setIdForeign(builder.idForeign);
 		setIdType(Identifier.ATTACHMENTTYPE, builder.idType);
+
+		if (builder.type != null)
+			setType(Identifier.ATTACHMENTTYPE, builder.type, -1);
 	}
 
 	public String getComment() {
@@ -24,10 +27,11 @@ public class Attachment extends Property {
 
 	public static class Builder {
 
-		private int		id;
-		private String	comment	= "";
-		private int		idType;
-		private int		idForeign;
+		private int			id;
+		private String		comment	= "";
+		private int			idType;
+		private Property	type	= null;
+		private int			idForeign;
 
 		public Builder(int id) {
 			this.id = id;
@@ -49,6 +53,12 @@ public class Attachment extends Property {
 
 		public Builder typeId(int idType) {
 			this.idType = idType;
+			return this;
+		}
+
+		public Builder type(Property type) {
+			this.type = type;
+			this.idType = type.getId();
 			return this;
 		}
 	}

@@ -14,7 +14,7 @@ public class XMouseAdapter extends MouseAdapter {
 
 	private final ImagePanel	panImage;
 	private Point				clickLoc;
-	private Point				imgLocOld;
+	private Point				imgLocation;
 
 	public XMouseAdapter(ImagePanel panImage) {
 		this.panImage = panImage;
@@ -24,7 +24,7 @@ public class XMouseAdapter extends MouseAdapter {
 	public void mousePressed(MouseEvent e) {
 		// System.out.println("mousePressed");
 		clickLoc = e.getPoint();
-		imgLocOld = panImage.getImageLocation();
+		imgLocation = panImage.getImageLocation();
 		Component c = panImage;
 		c.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 	}
@@ -41,41 +41,37 @@ public class XMouseAdapter extends MouseAdapter {
 		Point mouseLoc = e.getPoint();
 
 		// Determine how much the mouse moved since the initial click
-		int xOffset = (imgLocOld.x + mouseLoc.x) - (imgLocOld.x + clickLoc.x);
-		int yOffset = (imgLocOld.y + mouseLoc.y) - (imgLocOld.y + clickLoc.y);
+		int xOffset = (imgLocation.x + mouseLoc.x) - (imgLocation.x + clickLoc.x);
+		int yOffset = (imgLocation.y + mouseLoc.y) - (imgLocation.y + clickLoc.y);
 
-		// Move picture to this position
-		panImage.setImageLocation(imgLocOld.x + xOffset, imgLocOld.y + yOffset);
-		panImage.repaint();
+		// if false is returned the image was not moved for any reason
+		if (!panImage.setImageLocation(imgLocation.x + xOffset, imgLocation.y + yOffset)) {
+			mousePressed(e);
+		}
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+		imgLocation = panImage.getImageLocation();
 
+		int notches = e.getWheelRotation();
+
+		// CTRL+scroll, zoom
 		if ((e.getModifiers() & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK) {
-
-			String message;
-			int notches = e.getWheelRotation();
+			// zoom in
 			if (notches < 0) {
-				message = "Mouse wheel moved UP " + -notches + " notch(es)";
 				panImage.resizeImage(1.2);
-				// updateImage(SizeFit.NONE);
-			} else {
-				message = "Mouse wheel moved DOWN " + notches + " notch(es)";
+			}
+			else { // zoom out
 				panImage.resizeImage(-1.2);
-				// updateImage(SizeFit.NONE);
 			}
-
-			if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-				message += "    Scroll type: WHEEL_UNIT_SCROLL";
-				message += "    Scroll amount: " + e.getScrollAmount() + " unit increments per notch";
-				message += "    Units to scroll: " + e.getUnitsToScroll() + " unit increments";
-
-			} else { // scroll type == MouseWheelEvent.WHEEL_BLOCK_SCROLL
-				message += "    Scroll type: WHEEL_BLOCK_SCROLL";
-
-			}
-//			System.out.println(message);
+		}
+		else if ((e.getModifiers() & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
+			// SHIFT+scroll, manipulate x-coordinate
+			panImage.setImageLocation(imgLocation.x + (notches * -10), imgLocation.y);
+		}
+		else { // usual scroll, manipulate y-coordinate
+			panImage.setImageLocation(imgLocation.x, imgLocation.y + (notches * -10));
 		}
 	}
 
