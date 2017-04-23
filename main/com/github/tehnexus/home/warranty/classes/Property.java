@@ -12,7 +12,7 @@ public class Property extends XTreeNode {
 	private final int							id;
 	private String								name;
 
-	private HashMap<Identifier, Integer>		idTypes		= new HashMap<>(0);
+	private HashMap<Identifier, List<Integer>>	idTypes		= new HashMap<>(0);
 	private HashMap<Identifier, List<Property>>	types		= new HashMap<>(0);
 
 	private boolean								isDummy		= false;
@@ -43,7 +43,7 @@ public class Property extends XTreeNode {
 		return id;
 	}
 
-	public int getIdType(Identifier identifier) {
+	public List<Integer> getIdType(Identifier identifier) {
 		return idTypes.get(identifier);
 	}
 
@@ -67,7 +67,13 @@ public class Property extends XTreeNode {
 		this.name = name;
 	}
 
+	public void removeType(Identifier identifier, Property type) {
+		idTypes.get(identifier).remove(new Integer(type.getId()));
+		types.get(identifier).remove(type);
+	}
+
 	public void setType(Identifier identifier, Property type, int index) {
+
 		if (types.containsKey(identifier)) {
 			if (index > -1)
 				types.get(identifier).set(index, type);
@@ -79,7 +85,7 @@ public class Property extends XTreeNode {
 			list.add(type);
 			types.put(identifier, list);
 		}
-		setIdType(identifier, type.getId());
+		setIdType(identifier, type.getId(), index);
 	}
 
 	@Override
@@ -87,7 +93,18 @@ public class Property extends XTreeNode {
 		return name;
 	}
 
-	protected void setIdType(Identifier identifier, int idType) {
-		idTypes.put(identifier, idType);
+	protected void setIdType(Identifier identifier, int idType, int index) {
+
+		if (idTypes.containsKey(identifier)) {
+			if (index > -1)
+				idTypes.get(identifier).set(index, idType);
+			else
+				idTypes.get(identifier).add(idType);
+		}
+		else {
+			List<Integer> list = new ArrayList<>(0);
+			list.add(idType);
+			idTypes.put(identifier, list);
+		}
 	}
 }

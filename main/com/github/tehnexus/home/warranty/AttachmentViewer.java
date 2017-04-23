@@ -4,10 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -148,7 +145,6 @@ public class AttachmentViewer extends JDialog {
 	private void load(Attachment attach) throws IOException, SQLException {
 
 		try (InputStream inputStream = SQLUtil.blobFromDatabase(SQLStrings.queryAttachments(attach.getId()))) {
-			System.out.println("");
 			FileType fileType = FileTypeDetector.detectFileType(inputStream);
 
 			if (Util.isAnyOf(fileType, FileType.PNG, FileType.JPEG)) {
@@ -160,7 +156,6 @@ public class AttachmentViewer extends JDialog {
 				// PDPageTree pages = document.getDocumentCatalog().getPages();
 				// PDPage page = pages.get(0);
 				//
-				// System.out.println("");
 				// PDFRenderer pdfRenderer = new PDFRenderer(document);
 				// int pageCounter = 0;
 				// for (PDPage page : document.getPages()) {
@@ -168,7 +163,6 @@ public class AttachmentViewer extends JDialog {
 				// BufferedImage bm =
 				// pdfRenderer.renderImageWithDPI(pageCounter++,
 				// 300, ImageType.RGB);
-				// System.out.println("");
 				//
 				// // suffix in filename will be used as the file format
 				// ImageIOUtil.writeImage(bm, pdfFilename + "-" +

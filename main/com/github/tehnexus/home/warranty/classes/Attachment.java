@@ -1,6 +1,8 @@
 package com.github.tehnexus.home.warranty.classes;
 
 import com.github.tehnexus.home.util.Identifier;
+import com.github.tehnexus.sqlite.SQLStrings;
+import com.github.tehnexus.sqlite.SQLUtil;
 
 public class Attachment extends Property {
 
@@ -11,10 +13,11 @@ public class Attachment extends Property {
 		comment = builder.comment;
 
 		setIdForeign(builder.idForeign);
-		setIdType(Identifier.ATTACHMENTTYPE, builder.idType);
 
 		if (builder.type != null)
 			setType(Identifier.ATTACHMENTTYPE, builder.type, -1);
+		else
+			setIdType(Identifier.ATTACHMENTTYPE, builder.idType, -1);
 	}
 
 	public String getComment() {
@@ -23,6 +26,12 @@ public class Attachment extends Property {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public void propertyChange() {
+		String sqlString = SQLStrings.updatetblAttachment();
+		Object[] args = new Object[] { getType(Identifier.ATTACHMENTTYPE).get(0).getId(), getComment(), getId() };
+		SQLUtil.executePreparedStatement(sqlString, args);
 	}
 
 	public static class Builder {

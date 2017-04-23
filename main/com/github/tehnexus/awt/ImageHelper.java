@@ -33,8 +33,6 @@ public class ImageHelper extends BufferedImage {
 		int iImageWidth = (int) Math.round(img.getWidth() * dScaleFactor);
 		int iImageHeight = (int) Math.round(img.getHeight() * dScaleFactor);
 
-		// System.out.println("Scale Size = " + iImageWidth + "x" +
-		// iImageHeight);
 		if (dScaleFactor < 1.0d) {
 			imgScale = getScaledDownInstance(img, iImageWidth, iImageHeight);
 		}
@@ -49,7 +47,6 @@ public class ImageHelper extends BufferedImage {
 
 	private static BufferedImage getScaledDownInstance(BufferedImage img, int targetWidth, int targetHeight) {
 
-		// System.out.println("Scale down...");
 		int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
 				: BufferedImage.TYPE_INT_ARGB;
 

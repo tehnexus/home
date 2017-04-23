@@ -16,7 +16,7 @@ public class SQLStrings {
 
 	public static String insertIntotblProduct() {
 		return "INSERT INTO tblProduct(ID, Name, Description, Serial, "
-				+ "Date, Warranty, Price, [Order], Invoice, Customer) " + "VALUES(?,?,?,?,?,?,?,?,?,?)";
+				+ "Date, Warranty, Price, [Order], Invoice, Customer) VALUES(?,?,?,?,?,?,?,?,?,?)";
 	}
 
 	public static String insertIntotblProductProperties() {
@@ -34,7 +34,7 @@ public class SQLStrings {
 	public static String queryAttachments() {
 		return "SELECT * FROM tblAttachment";
 	}
-	
+
 	public static String queryAttachments(int id) {
 		return "SELECT Attachment FROM tblAttachment WHERE ID=" + id;
 	}
@@ -65,6 +65,10 @@ public class SQLStrings {
 		return "SELECT * FROM tblShopType";
 	}
 
+	public static String updatetblAttachment() {
+		return "UPDATE tblAttachment SET TypeID=?,Comment=? WHERE ID=?";
+	}
+
 	public static String updatetblProduct() {
 		return "UPDATE tblProduct SET Name=?,Description=?,Serial=?, "
 				+ "Date=?,Warranty=?,Price=?,[Order]=?,Invoice=?,Customer=?,Comment=? WHERE ID=?";
@@ -72,6 +76,10 @@ public class SQLStrings {
 
 	public static String updatetblProductProperties() {
 		return "UPDATE tblProductProperties SET ManufacturerID=?,ShopID=?,PaymentID=? WHERE ProductID=?";
+	}
+
+	public static String deleteFromtblAttachment() {
+		return "DELETE FROM tblAttachment WHERE ID=?";
 	}
 
 }

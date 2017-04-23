@@ -39,9 +39,9 @@ public class Product extends Property {
 		customer = builder.customer;
 		comment = builder.comment;
 
-		setIdType(Identifier.SHOP, builder.idShop);
-		setIdType(Identifier.MANUFACTURER, builder.idManufacturer);
-		setIdType(Identifier.PAYMENT, builder.idPay);
+		setIdType(Identifier.SHOP, builder.idShop, 0);
+		setIdType(Identifier.MANUFACTURER, builder.idManufacturer, 0);
+		setIdType(Identifier.PAYMENT, builder.idPay, 0);
 
 		computeDates();
 	}

@@ -20,7 +20,7 @@ public class Shop extends Property {
 		fax = builder.fax;
 		comment = builder.comment;
 
-		setIdType(Identifier.SHOPTYPE, builder.idType);
+		setIdType(Identifier.SHOPTYPE, builder.idType, -1);
 	}
 
 	public void setFullname(String fullname) {

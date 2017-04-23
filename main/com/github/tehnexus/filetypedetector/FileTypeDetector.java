@@ -47,7 +47,7 @@ public class FileTypeDetector {
 		root.addPath(FileType.PSD, "8BPS".getBytes(Charsets.ISO_8859_1));
 		root.addPath(FileType.PNG, new byte[] { (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00,
 				0x0D, 0x49, 0x48, 0x44, 0x52 });
-		// TODO technically there are other very rare magic numbers for OS/2 BMP files...
+		// technically there are other very rare magic numbers for OS/2 BMP files...
 		root.addPath(FileType.BMP, "BM".getBytes(Charsets.ISO_8859_1));
 		root.addPath(FileType.GIF, "GIF87a".getBytes(Charsets.ISO_8859_1));
 		root.addPath(FileType.GIF, "GIF89a".getBytes(Charsets.ISO_8859_1));

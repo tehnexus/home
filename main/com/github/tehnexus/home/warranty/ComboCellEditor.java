@@ -1,8 +1,7 @@
 package com.github.tehnexus.home.warranty;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.util.List;
 
 import javax.swing.AbstractCellEditor;
@@ -12,18 +11,21 @@ import javax.swing.table.TableCellEditor;
 
 import com.github.tehnexus.home.warranty.classes.Property;
 
-public class ComboCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+public class ComboCellEditor extends AbstractCellEditor implements TableCellEditor {
 
-	private Property		property;
-	private List<Property>	listProperty;
+	private final List<Property>	listProperty;
+	private final ItemListener		itemListener;
 
-	public ComboCellEditor(List<Property> listProperty) {
+	private Property				property;
+
+	public ComboCellEditor(List<Property> listProperty, ItemListener itemListener) {
 		this.listProperty = listProperty;
+		this.itemListener = itemListener;
 	}
 
 	@Override
-	public Object getCellEditorValue() {
-		return this.property;
+	public Property getCellEditorValue() {
+		return property;
 	}
 
 	@Override
@@ -33,30 +35,21 @@ public class ComboCellEditor extends AbstractCellEditor implements TableCellEdit
 			this.property = (Property) value;
 		}
 
-		JComboBox<Property> comboCountry = new JComboBox<>();
+		JComboBox<Property> combo = new JComboBox<>();
 
 		for (Property p : listProperty) {
-			comboCountry.addItem(p);
+			combo.addItem(p);
 		}
 
-		comboCountry.setSelectedItem(property);
-		comboCountry.addActionListener(this);
+		combo.setSelectedItem(property);
+		combo.addItemListener(itemListener);
 
 		if (isSelected) {
-			comboCountry.setBackground(table.getSelectionBackground());
+			combo.setBackground(table.getSelectionBackground());
 		}
 		else {
-			comboCountry.setBackground(table.getSelectionForeground());
+			combo.setBackground(table.getSelectionForeground());
 		}
-
-		return comboCountry;
+		return combo;
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		@SuppressWarnings("unchecked")
-		JComboBox<Property> comboProperty = (JComboBox<Property>) event.getSource();
-		this.property = (Property) comboProperty.getSelectedItem();
-	}
-
 }

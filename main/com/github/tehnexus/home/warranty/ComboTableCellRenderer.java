@@ -23,9 +23,7 @@ public class ComboTableCellRenderer extends DefaultTableCellRenderer {
 			else {
 				setBackground(table.getSelectionForeground());
 			}
-
 		}
-
 		return this;
 	}
 

@@ -178,7 +178,7 @@ public class Properties extends HashMap<Integer, Property> {
 			for (Entry<Integer, Property> eChild : allTypes.entrySet()) {
 
 				Property child = eChild.getValue();
-				if (child.getId() == parent.getIdType(identifier)) {
+				if (child.getId() == parent.getIdType(identifier).get(0)) {
 					parent.setType(identifier, child, -1);
 					break;
 				}

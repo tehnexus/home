@@ -156,8 +156,6 @@ public class TabWarranty extends JPanel {
 			shop = finishedWorkers.get(Identifier.SHOP);
 			shop.setTypeValues(Identifier.SHOPTYPE, finishedWorkers.get(Identifier.SHOPTYPE), false);
 			configDoneShop = true;
-			System.out.println("configDoneShop");
-			System.out.flush();
 		}
 
 		if (!configDoneAttachment && !configRunningAttachment && finishedWorkers.containsKey(Identifier.ATTACHMENT)
@@ -167,16 +165,12 @@ public class TabWarranty extends JPanel {
 			attachment = finishedWorkers.get(Identifier.ATTACHMENT);
 			attachment.setTypeValues(Identifier.ATTACHMENTTYPE, finishedWorkers.get(Identifier.ATTACHMENTTYPE), false);
 			configDoneAttachment = true;
-			System.out.println("configDoneAttachment");
-			System.out.flush();
 		}
 
 		if (!configDonePayment && !configRunningPayment && finishedWorkers.containsKey(Identifier.PAYMENT)) {
 			configRunningPayment = true;
 			payment = finishedWorkers.get(Identifier.PAYMENT);
 			configDonePayment = true;
-			System.out.println("configDonePayment");
-			System.out.flush();
 		}
 
 		if (!configDoneManufacturer && !configRunningManufacturer
@@ -184,8 +178,6 @@ public class TabWarranty extends JPanel {
 			configRunningManufacturer = true;
 			manufacturer = finishedWorkers.get(Identifier.MANUFACTURER);
 			configDoneManufacturer = true;
-			System.out.println("configDoneManufacturer");
-			System.out.flush();
 		}
 
 		if (!configRunningProduct && finishedWorkers.containsKey(Identifier.PRODUCT) && configDoneShop
@@ -195,8 +187,6 @@ public class TabWarranty extends JPanel {
 			products = finishedWorkers.get(Identifier.PRODUCT);
 			finalizeProducts();
 			editor.setProperties(products);
-			System.out.println("configDoneProduct");
-			System.out.flush();
 			finishedWorkers.clear();
 
 			refreshTree(true);
@@ -235,9 +225,6 @@ public class TabWarranty extends JPanel {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent pce) {
-			// System.out.println(pce.getSource().toString());
-			// System.out.println(pce.getPropertyName());
-
 			switch (pce.getPropertyName()) {
 
 			case "sqlDataChange":

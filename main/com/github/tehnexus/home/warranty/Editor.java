@@ -1,12 +1,9 @@
 package com.github.tehnexus.home.warranty;
 
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -14,7 +11,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.text.MaskFormatter;
@@ -83,44 +79,6 @@ public class Editor extends JPanel {
 		resetFields();
 		Utils.setEnabled(Utils.getAllComponents(this), false);
 		addPropertyChangeListener(propertyListener);
-	}
-
-	public void loadProduct(Object obj) {
-		if (!(obj instanceof Product)) {
-			resetFields();
-			Utils.setEnabled(Utils.getAllComponents(this), false);
-			return;
-		}
-		Utils.setEnabled(Utils.getAllComponents(this), true);
-		currentTreeSelection = (Product) obj;
-
-		ftxtID.setValue(currentTreeSelection.getId());
-		txtName.setText(currentTreeSelection.getName());
-		txtFullname.setText(currentTreeSelection.getFullname());
-		txtSerial.setText(currentTreeSelection.getSerial());
-		ftxtWarranty.setValue(currentTreeSelection.getWarranty());
-		// System.out.println("Buy GMT: " + p.getBuyDateGMT() + "\nBuy Local: "
-		// + p.getBuyDateLocal() + "\n"
-		// + "Warranty End GMT: " + p.getWarrantyEndGMT() + "\nWarranty End
-		// Local: " + p.getWarrantyEndLocal());
-		datePicker.setDate(currentTreeSelection.getBuyDateLocal().toLocalDate());
-		timePicker.setTime(currentTreeSelection.getBuyDateLocal().toLocalTime());
-		ftxtPrice.setValue(currentTreeSelection.getPrice());
-		txtOrder.setText(currentTreeSelection.getOrder());
-		txtInvoice.setText(currentTreeSelection.getInvoice());
-		txtCustomer.setText(currentTreeSelection.getCustomer());
-		txtComment.setText(currentTreeSelection.getComment());
-
-		cboShop.setSelectedItem(currentTreeSelection.getType(Identifier.SHOP).get(0));
-		cboManu.setSelectedItem(currentTreeSelection.getType(Identifier.MANUFACTURER).get(0));
-		cboPay.setSelectedItem(currentTreeSelection.getType(Identifier.PAYMENT).get(0));
-	}
-
-	public void setProperties(Properties properties) {
-		this.products = properties;
-		cboShop.setSource(products.getTypes(Identifier.SHOP));
-		cboManu.setSource(products.getTypes(Identifier.MANUFACTURER));
-		cboPay.setSource(products.getTypes(Identifier.PAYMENT));
 	}
 
 	private void createGUI() {
@@ -229,12 +187,8 @@ public class Editor extends JPanel {
 		datePicker.setDateToToday();
 		datePicker.setFont(XFont.FONT_MONOSPACED);
 		datePickerButton = datePicker.getComponentToggleCalendarButton();
-		datePickerButton.setText("");
-
-		URL dateImageURL = getClass().getClassLoader().getResource("images/datepickerbutton1.png");
-		Image dateExampleImage = Toolkit.getDefaultToolkit().getImage(dateImageURL);
-		ImageIcon dateExampleIcon = new ImageIcon(dateExampleImage);
-		datePickerButton.setIcon(dateExampleIcon);
+		datePickerButton.setText(null);
+		datePickerButton.setIcon(Util.getIcon("images/datepickerbutton1.png", -1));
 
 		timeSettings.setAllowEmptyTimes(false);
 		timeSettings.setDisplaySpinnerButtons(true);
@@ -243,13 +197,9 @@ public class Editor extends JPanel {
 		timeSettings.setAllowKeyboardEditing(false);
 		timeSettings.setInitialTimeToNow();
 		timePickerButton = timePicker.getComponentToggleTimeMenuButton();
-		timePickerButton.setText("");
+		timePickerButton.setText(null);
+		timePickerButton.setIcon(Util.getIcon("images/timepickerbutton1.png", -1));
 		timePicker.setFont(XFont.FONT_MONOSPACED);
-
-		URL timeIconURL = getClass().getClassLoader().getResource("images/timepickerbutton1.png");
-		Image timeExampleImage = Toolkit.getDefaultToolkit().getImage(timeIconURL);
-		ImageIcon timeExampleIcon = new ImageIcon(timeExampleImage);
-		timePickerButton.setIcon(timeExampleIcon);
 
 		btnNew.setFont(XFont.FONT_DEFAULT);
 		btnSave.setFont(XFont.FONT_BTNCONFIRM_DEFAULT);
@@ -364,6 +314,33 @@ public class Editor extends JPanel {
 		}
 	}
 
+	public void loadProduct(Object obj) {
+		if (!(obj instanceof Product)) {
+			resetFields();
+			Utils.setEnabled(Utils.getAllComponents(this), false);
+			return;
+		}
+		Utils.setEnabled(Utils.getAllComponents(this), true);
+		currentTreeSelection = (Product) obj;
+
+		ftxtID.setValue(currentTreeSelection.getId());
+		txtName.setText(currentTreeSelection.getName());
+		txtFullname.setText(currentTreeSelection.getFullname());
+		txtSerial.setText(currentTreeSelection.getSerial());
+		ftxtWarranty.setValue(currentTreeSelection.getWarranty());
+		datePicker.setDate(currentTreeSelection.getBuyDateLocal().toLocalDate());
+		timePicker.setTime(currentTreeSelection.getBuyDateLocal().toLocalTime());
+		ftxtPrice.setValue(currentTreeSelection.getPrice());
+		txtOrder.setText(currentTreeSelection.getOrder());
+		txtInvoice.setText(currentTreeSelection.getInvoice());
+		txtCustomer.setText(currentTreeSelection.getCustomer());
+		txtComment.setText(currentTreeSelection.getComment());
+
+		cboShop.setSelectedItem(currentTreeSelection.getType(Identifier.SHOP).get(0));
+		cboManu.setSelectedItem(currentTreeSelection.getType(Identifier.MANUFACTURER).get(0));
+		cboPay.setSelectedItem(currentTreeSelection.getType(Identifier.PAYMENT).get(0));
+	}
+
 	private void resetFields() {
 		ftxtID.setValue(0);
 		txtName.setText(null);
@@ -380,6 +357,13 @@ public class Editor extends JPanel {
 		cboPay.setSelectedIndex(0);
 		txtCustomer.setText(null);
 		txtComment.setText(null);
+	}
+
+	public void setProperties(Properties properties) {
+		this.products = properties;
+		cboShop.setSource(products.getTypes(Identifier.SHOP));
+		cboManu.setSource(products.getTypes(Identifier.MANUFACTURER));
+		cboPay.setSource(products.getTypes(Identifier.PAYMENT));
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -430,13 +414,13 @@ public class Editor extends JPanel {
 					Properties props = (Properties) pce.getNewValue();
 					switch (props.getIdentifier()) {
 						case SHOP:
-							System.out.println("SHOP");
+
 							break;
 						case PAYMENT:
-							System.out.println("PAYMENT");
+
 							break;
 						case MANUFACTURER:
-							System.out.println("MANUFACTURER");
+
 							break;
 					}
 
@@ -452,7 +436,6 @@ public class Editor extends JPanel {
 					break;
 
 				default:
-					// System.out.println(pce.getPropertyName());
 					break;
 			}
 		}

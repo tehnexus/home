@@ -22,7 +22,6 @@ public class XMouseAdapter extends MouseAdapter {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// System.out.println("mousePressed");
 		clickLoc = e.getPoint();
 		imgLocation = panImage.getImageLocation();
 		Component c = panImage;
