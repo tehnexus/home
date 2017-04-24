@@ -1,4 +1,4 @@
-package com.github.tehnexus.swing.utils;
+package com.github.tehnexus.swing;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Richard Bair
  */
-public class Utils {
+public class Util {
 
 	public static List<Component> getAllComponents(final Container c) {
 		Component[] comps = c.getComponents();

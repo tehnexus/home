@@ -1,7 +1,7 @@
 package com.github.tehnexus.home.warranty;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -29,78 +30,68 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.JTableHeader;
 
-import com.github.tehnexus.awt.Dimension;
 import com.github.tehnexus.home.util.Identifier;
 import com.github.tehnexus.home.util.Util;
 import com.github.tehnexus.home.warranty.classes.Attachment;
+import com.github.tehnexus.home.warranty.classes.Product;
 import com.github.tehnexus.home.warranty.classes.Properties;
 import com.github.tehnexus.home.warranty.classes.Property;
 import com.github.tehnexus.sqlite.SQLStrings;
 import com.github.tehnexus.sqlite.SQLUtil;
 
-public class AttachmentTable extends JDialog {
+public class AttachmentTableView extends JPanel {
 
-	private final Property									product;
-	private final Properties								properties;
+	private Properties										properties;
+	private Property										product;
+
 	private AttachmentTableModel							tableModel;
 	private HashMap<Integer, LoadAttachmentViewerWorker>	workers			= new HashMap<>(0);
-	private HashMap<Integer, AttachmentViewer>				finishedWorkers	= new HashMap<>(0);
+	private HashMap<Integer, AttachmentViewer>				finishedViewers	= new HashMap<>(0);
 
 	// private JButton btnExport = new JButton("Export");
 	private JTable											table			= new JTable();
 
-	// private AttachmentViewer attViewer;
-
-	public AttachmentTable(Properties properties, Property product) {
-		this.product = product;
-		this.properties = properties;
-
-		loadAttachmentViewers(); // concurrent
-
-		createAndShowGUI();
+	public AttachmentTableView() {
+		createGUI();
 	}
 
-	private void addAttachment(Attachment attach, byte[] bytes) {
-		String sqlString = SQLStrings.insertIntotblAttachment();
-
-		Object[] args = new Object[] { attach.getId(), attach.getIdForeign(),
-				attach.getIdType(Identifier.ATTACHMENTTYPE).get(0), bytes, attach.getComment() };
-
-		SQLUtil.executePreparedStatement(sqlString, args);
+	public void initialize(Properties properties) {
+		this.properties = properties;
+		prepareTable();
 	}
 
 	private void addAttachmentFromFile() {
 
 		AttachmentViewer attViewer = new AttachmentViewer();
-		if (attViewer.hasValidFile()) {
-
-			Properties allAttachments = properties.getTypes(Identifier.ATTACHMENT);
-			int id = allAttachments.getNewId();
-
-			Properties attAttachmentTypes = allAttachments.getTypes(Identifier.ATTACHMENTTYPE);
-			Property attachmentType = attAttachmentTypes.get(0);
-
-			Attachment attach = new Attachment.Builder(id).comment("").type(attachmentType).idForeign(product.getId())
-					.build();
-
-			addAttachment(attach, attViewer.getFile());
-
-			product.setType(Identifier.ATTACHMENT, attach, -1);
-			tableModel.addRecord(attach);
-			tableModel.fireTableDataChanged();
-
-			if (attach != null)
-				attViewer.setVisible(true);
+		if (!attViewer.hasValidFile()) {
+			attViewer = null;
+			return;
 		}
+
+		Properties allAttachments = properties.getTypes(Identifier.ATTACHMENT);
+		int id = allAttachments.getNewId();
+		Properties attAttachmentTypes = allAttachments.getTypes(Identifier.ATTACHMENTTYPE);
+		Property attachmentType = attAttachmentTypes.get(0);
+
+		String sqlString = SQLStrings.insertIntotblAttachment();
+		Object[] args = new Object[] { id, product.getId(), attachmentType.getId(), attViewer.getFile(), "" };
+		SQLUtil.executePreparedStatement(sqlString, args);
+
+		Attachment attach = new Attachment.Builder(id).comment(null).type(attachmentType).idForeign(product.getId())
+				.build();
+		allAttachments.put(attach.getId(), attach);
+
+		product.setType(Identifier.ATTACHMENT, attach, -1);
+
+		tableModel.addRecord(attach);
+		tableModel.fireTableDataChanged();
+		finishedViewers.put(attach.getId(), attViewer);
 	}
 
-	private void createAndShowGUI() {
-		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-		setMinimumSize(new Dimension(500, 600));
-		setLocationRelativeTo(null);
+	private void createGUI() {
 		setLayout(new BorderLayout());
-		setTitle("Attachments");
 
 		JPopupMenu popupMenu = new JPopupMenu("Attachment");
 		popupMenu.addPopupMenuListener(new TablePopupMenuListener(table, popupMenu));
@@ -116,13 +107,15 @@ public class AttachmentTable extends JDialog {
 		addItem.addActionListener(new TablePopupMenuAction(addItem));
 
 		table.setComponentPopupMenu(popupMenu);
+		table.getTableHeader().setComponentPopupMenu(popupMenu);
 		// table.addMouseListener(new TablePopupMenuListener(popupMenu));
 
 		table.setRowHeight(25);
 		JScrollPane scrollPane = new JScrollPane(table);
 		add(scrollPane, BorderLayout.CENTER);
-		// add(btnExport, BorderLayout.NORTH);
+	}
 
+	private void prepareTable() {
 		// getting all possible values for type combo
 		Properties allAttachTypes = properties.getTypes(Identifier.ATTACHMENT).getTypes(Identifier.ATTACHMENTTYPE);
 		List<Property> allAttachTypesList = new ArrayList<>(allAttachTypes.values());
@@ -138,31 +131,38 @@ public class AttachmentTable extends JDialog {
 
 		// set button as editor and renderer for attachment column
 		TableButtonColumn tableButtonColumn = new TableButtonColumn(table, new TableButtonAction(), 2);
+	}
+
+	public void buildTable(Product product) {
+		this.product = product;
+		loadAttachmentViewers();
+		tableModel.clearRecords();
 
 		// loop attachments in of this product and add to tablemodel
 		List<Property> listAttachment = product.getType(Identifier.ATTACHMENT);
-		if (listAttachment == null)
-			return;
-		for (Property p : listAttachment) {
-			Attachment attach = (Attachment) p;
-			tableModel.addRecord(attach);
+		if (listAttachment != null) {
+			for (Property p : listAttachment) {
+				Attachment attach = (Attachment) p;
+				tableModel.addRecord(attach);
+			}
 		}
+		tableModel.fireTableDataChanged();
 	}
 
 	private void loadAttachment(int id) {
 		AttachmentViewer attViewer = null;
 		// check if worker is done
-		if (!finishedWorkers.containsKey(id)) {
+		if (!finishedViewers.containsKey(id)) {
 			try { // id not done, wait
 				attViewer = workers.get(id).get();
-				finishedWorkers.put(id, attViewer);
+				finishedViewers.put(id, attViewer);
 			}
 			catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
 		}
 		else { // id done show
-			attViewer = finishedWorkers.get(id);
+			attViewer = finishedViewers.get(id);
 		}
 		attViewer.setVisible(true);
 	}
@@ -183,18 +183,23 @@ public class AttachmentTable extends JDialog {
 	}
 
 	private void removeAttachment() {
-		// TODO: ask user to confirm by typing "DELETE" into textfield in popup
-		String sqlString = SQLStrings.deleteFromtblAttachment();
+
+		ConfirmDialog dialog = new ConfirmDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Delete Attachment",
+				"Please confirm that you want to delete, enter:\n", "DELETE");
+		if (!dialog.isConfirmed())
+			return;
 
 		int tableRow = table.getSelectedRow();
 		Attachment attach = tableModel.getAttachmentAt(table.convertRowIndexToModel(tableRow));
 
+		String sqlString = SQLStrings.deleteFromtblAttachment();
 		Object[] args = new Object[] { attach.getId() };
 		SQLUtil.executePreparedStatement(sqlString, args);
+
 		tableModel.removeRecord(attach);
+
+		properties.getTypes(Identifier.ATTACHMENT).remove(attach);
 		product.removeType(Identifier.ATTACHMENT, attach);
-		// TODO remove attachment from list of all attachments and assignment to
-		// product
 	}
 
 	public class AttachmentTableModel extends AbstractTableModel {
@@ -207,6 +212,12 @@ public class AttachmentTable extends JDialog {
 
 		public AttachmentTableModel(String[] columnNames) {
 			this.colNames = columnNames;
+		}
+
+		public void clearRecords() {
+			for (int i = data.size() - 1; i > -1; i--) {
+				data.remove(i);
+			}
 		}
 
 		public void addRecord(Attachment row) {
@@ -354,7 +365,7 @@ public class AttachmentTable extends JDialog {
 
 	private class TablePopupMenuAction extends AbstractAction {
 
-		// handles clicks on table
+		// handles clicks on popupmenu of table
 		private final JMenuItem menuItem;
 
 		public TablePopupMenuAction(JMenuItem menuItem) {
@@ -364,21 +375,18 @@ public class AttachmentTable extends JDialog {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (ae.getSource().equals(menuItem)) {
-				int tableRow = table.getSelectedRow();
-				if (tableRow > -1) {
-
-					switch (menuItem.getText()) {
-						case "Delete":
+				switch (menuItem.getText()) {
+					case "Delete":
+						int tableRow = table.getSelectedRow();
+						if (tableRow > -1)
 							removeAttachment();
-							break;
-						case "Add":
-							addAttachmentFromFile();
-							break;
-					}
+						break;
+					case "Add":
+						addAttachmentFromFile();
+						break;
 				}
 			}
 		}
-
 	}
 
 	private class TablePopupMenuListener implements PopupMenuListener {
@@ -393,19 +401,32 @@ public class AttachmentTable extends JDialog {
 		}
 
 		@Override
-		public void popupMenuCanceled(PopupMenuEvent arg0) {
+		public void popupMenuCanceled(PopupMenuEvent e) {
 		}
 
 		@Override
-		public void popupMenuWillBecomeInvisible(PopupMenuEvent arg0) {
+		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 		}
 
 		@Override
-		public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
+		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 			SwingUtilities.invokeLater(() -> {
-				int rowAtPoint = table.rowAtPoint(SwingUtilities.convertPoint(popup, new Point(0, 0), table));
-				if (rowAtPoint > -1) {
-					table.setRowSelectionInterval(rowAtPoint, rowAtPoint);
+
+				Component invoker = popup.getInvoker();
+				if (invoker instanceof JTable) {
+
+					Point point = SwingUtilities.convertPoint(popup, new Point(0, 0), table);
+					int row = table.rowAtPoint(point);
+					if (row > -1) {
+						com.github.tehnexus.swing.Util
+								.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(popup), true);
+						table.setRowSelectionInterval(row, row);
+					}
+				}
+				else if (invoker instanceof JTableHeader) {
+					table.clearSelection();
+					JMenuItem item = (JMenuItem) popup.getComponent(0);
+					item.setEnabled(false);
 				}
 			});
 		}
@@ -424,7 +445,7 @@ public class AttachmentTable extends JDialog {
 			if (pce.getPropertyName().equalsIgnoreCase("state")
 					&& ((StateValue) pce.getNewValue()).equals(StateValue.DONE)) {
 				try {
-					finishedWorkers.put(worker.getAttachmentId(), worker.get());
+					finishedViewers.put(worker.getAttachmentId(), worker.get());
 				}
 				catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();

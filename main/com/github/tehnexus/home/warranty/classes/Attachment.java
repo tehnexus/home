@@ -51,6 +51,8 @@ public class Attachment extends Property {
 		}
 
 		public Builder comment(String comment) {
+			if (comment == null)
+				comment = "";
 			this.comment = comment;
 			return this;
 		}

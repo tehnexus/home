@@ -10,12 +10,11 @@ import com.github.tehnexus.home.warranty.tree.XTreeNode;
 public class Property extends XTreeNode {
 
 	private final int							id;
-	private String								name;
+	private String								name		= "";
+	private boolean								isDummy		= false;
 
 	private HashMap<Identifier, List<Integer>>	idTypes		= new HashMap<>(0);
 	private HashMap<Identifier, List<Property>>	types		= new HashMap<>(0);
-
-	private boolean								isDummy		= false;
 
 	// used for one-to-many relationship in database:
 	private int									idForeign	= -1;
@@ -31,16 +30,12 @@ public class Property extends XTreeNode {
 		setDummy(isDummy);
 	}
 
-	protected void setIdForeign(int idForeign) {
-		this.idForeign = idForeign;
+	public int getId() {
+		return id;
 	}
 
 	public int getIdForeign() {
 		return idForeign;
-	}
-
-	public int getId() {
-		return id;
 	}
 
 	public List<Integer> getIdType(Identifier identifier) {
@@ -59,21 +54,38 @@ public class Property extends XTreeNode {
 		return isDummy;
 	}
 
+	public void removeType(Identifier identifier, Property type) {
+		idTypes.get(identifier).remove(new Integer(type.getId()));
+		types.get(identifier).remove(type);
+	}
+
 	public void setDummy(boolean isDummy) {
 		this.isDummy = isDummy;
+	}
+
+	protected void setIdForeign(int idForeign) {
+		this.idForeign = idForeign;
+	}
+
+	protected void setIdType(Identifier identifier, int idType, int index) {
+		if (idTypes.containsKey(identifier)) {
+			if (index > -1)
+				idTypes.get(identifier).set(index, idType);
+			else
+				idTypes.get(identifier).add(idType);
+		}
+		else {
+			List<Integer> list = new ArrayList<>(0);
+			list.add(idType);
+			idTypes.put(identifier, list);
+		}
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public void removeType(Identifier identifier, Property type) {
-		idTypes.get(identifier).remove(new Integer(type.getId()));
-		types.get(identifier).remove(type);
-	}
-
 	public void setType(Identifier identifier, Property type, int index) {
-
 		if (types.containsKey(identifier)) {
 			if (index > -1)
 				types.get(identifier).set(index, type);
@@ -91,20 +103,5 @@ public class Property extends XTreeNode {
 	@Override
 	public String toString() {
 		return name;
-	}
-
-	protected void setIdType(Identifier identifier, int idType, int index) {
-
-		if (idTypes.containsKey(identifier)) {
-			if (index > -1)
-				idTypes.get(identifier).set(index, idType);
-			else
-				idTypes.get(identifier).add(idType);
-		}
-		else {
-			List<Integer> list = new ArrayList<>(0);
-			list.add(idType);
-			idTypes.put(identifier, list);
-		}
 	}
 }

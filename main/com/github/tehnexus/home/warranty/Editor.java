@@ -33,8 +33,6 @@ import com.github.tehnexus.swing.XFormattedTextField;
 import com.github.tehnexus.swing.XLabel;
 import com.github.tehnexus.swing.XTextArea;
 import com.github.tehnexus.swing.XTextField;
-import com.github.tehnexus.swing.utils.Utils;
-
 import net.miginfocom.swing.MigLayout;
 
 public class Editor extends JPanel {
@@ -66,25 +64,27 @@ public class Editor extends JPanel {
 	private JButton				btnSave				= new JButton("Save");
 	private JButton				btnNew				= new JButton("New");
 	private JButton				btnDelete			= new JButton("Delete");
-	private JButton				btnAttachment		= new JButton("Attachments");
 
 	private Product				currentTreeSelection;
 	private Properties			products;
 
 	private PropertyListener	propertyListener	= new PropertyListener();
 	private ButtonListener		buttonListener		= new ButtonListener();
+	private AttachmentTableView	attachTableView		= new AttachmentTableView();
 
 	public Editor() {
+		setVisible(false);
 		createGUI();
 		resetFields();
-		Utils.setEnabled(Utils.getAllComponents(this), false);
+		com.github.tehnexus.swing.Util.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(this), false);
 		addPropertyChangeListener(propertyListener);
 	}
 
 	private void createGUI() {
 
-		setLayout(new MigLayout("", "[3px][fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][3px]",
-				"[][][][][][][][][][][][][][][][][grow][][][][]"));
+		setLayout(new MigLayout("",
+				"[3px][fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][3px][250px:250px,grow,fill]",
+				"[][][][][][][][][][][][][][grow][]"));
 
 		// formatter for id field
 		MaskFormatter formatterID = null;
@@ -116,67 +116,66 @@ public class Editor extends JPanel {
 
 		// Create and add fields
 		ftxtID = new XFormattedTextField.Builder(this, formatterID).editable(false).font(XFont.FONT_MONOSPACED)
-				.constraints("cell 2 2,growx").build();
+				.constraints("cell 2 0,growx").build();
 
-		txtName = new XTextField.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 3 5 1,growx").build();
+		txtName = new XTextField.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 1 5 1,growx").build();
 
-		txtFullname = new XTextField.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 4 5 1,growx").build();
+		txtFullname = new XTextField.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 2 5 1,growx").build();
 
-		txtSerial = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 6 5 1,growx").build();
+		txtSerial = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 3 5 1,growx").build();
 
 		ftxtWarranty = new XFormattedTextField.Builder(this, formatterWarranty).value(2.0).font(XFont.FONT_MONOSPACED)
-				.constraints("cell 2 8 5 1,growx").build();
+				.constraints("cell 2 5 5 1,growx").build();
 
 		ftxtPrice = new XFormattedTextField.Builder(this, formatterPrice).value(.0).font(XFont.FONT_MONOSPACED)
-				.constraints("cell 2 9 5 1,growx").build();
+				.constraints("cell 2 6 5 1,growx").build();
 
-		txtOrder = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 10 5 1,growx").build();
+		txtOrder = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 7 5 1,growx").build();
 
-		txtInvoice = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 11 5 1,growx")
-				.build();
+		txtInvoice = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 8 5 1,growx").build();
 
-		txtCustomer = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 12 5 1,growx")
+		txtCustomer = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 9 5 1,growx")
 				.build();
 
 		cboShop = new PropertyComboBox();
 		cboShop.addPropertyChangeListener(propertyListener);
-		add(cboShop, "cell 2 13 4 1,growx");
-
-		cboManu = new PropertyComboBox();
-		cboManu.addPropertyChangeListener(propertyListener);
-		add(cboManu, "cell 2 14 4 1,growx");
-
-		cboPay = new PropertyComboBox();
-		cboPay.addPropertyChangeListener(propertyListener);
-		add(cboPay, "cell 2 15 4 1,growx");
-
-		txtComment = new XTextArea.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 16 5 1,grow").build();
-
-		dateSettings = new DatePickerSettings(Locale.getDefault(Locale.Category.FORMAT));
-		datePicker = new DatePicker(this.dateSettings);
-		add(datePicker, "cell 2 7,growx");
-		timeSettings = new TimePickerSettings(Locale.getDefault(Locale.Category.FORMAT));
-		timePicker = new TimePicker(this.timeSettings);
-		add(timePicker, "cell 3 7,growx");
+		add(cboShop, "cell 2 10 4 1,growx");
 
 		// add buttons
 		btnNew.addActionListener(buttonListener);
-		add(btnNew, "cell 3 2");
+		add(btnNew, "cell 3 0");
+		btnNew.setFont(XFont.FONT_DEFAULT);
 
-		btnAttachment.addActionListener(buttonListener);
-		add(btnAttachment, "cell 5 2 2 1,growx");
+		cboManu = new PropertyComboBox();
+		cboManu.addPropertyChangeListener(propertyListener);
+		add(cboManu, "cell 2 11 4 1,growx");
+
+		cboPay = new PropertyComboBox();
+		cboPay.addPropertyChangeListener(propertyListener);
+		add(cboPay, "cell 2 12 4 1,growx");
+
+		txtComment = new XTextArea.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 13 5 1,grow").build();
+
+		dateSettings = new DatePickerSettings(Locale.getDefault(Locale.Category.FORMAT));
+		datePicker = new DatePicker(this.dateSettings);
+		add(datePicker, "cell 2 4,growx");
+		timeSettings = new TimePickerSettings(Locale.getDefault(Locale.Category.FORMAT));
+		timePicker = new TimePicker(this.timeSettings);
+		add(timePicker, "cell 3 4,growx");
 
 		btnEditShop.addActionListener(buttonListener);
-		add(btnEditShop, "cell 6 13,growx");
+		add(btnEditShop, "cell 6 10,growx");
 
 		btnEditManufacturer.addActionListener(buttonListener);
-		add(btnEditManufacturer, "cell 6 14,growx");
+		add(btnEditManufacturer, "cell 6 11,growx");
 
 		btnDelete.addActionListener(buttonListener);
-		add(btnDelete, "cell 1 17,grow");
+		add(btnDelete, "cell 1 14,grow");
 
 		btnSave.addActionListener(buttonListener);
-		add(btnSave, "cell 2 17 5 1,grow");
+		add(btnSave, "cell 2 14 5 1,grow");
+
+		add(attachTableView, "cell 7 0 1 15,grow");
 
 		// Field settings
 		txtComment.setLineWrap(true);
@@ -200,25 +199,23 @@ public class Editor extends JPanel {
 		timePickerButton.setText(null);
 		timePickerButton.setIcon(Util.getIcon("images/timepickerbutton1.png", -1));
 		timePicker.setFont(XFont.FONT_MONOSPACED);
-
-		btnNew.setFont(XFont.FONT_DEFAULT);
 		btnSave.setFont(XFont.FONT_BTNCONFIRM_DEFAULT);
 
 		// Create and add labels
-		add(new XLabel.Builder("ID:").labelFor(this.ftxtID).build(), "cell 1 2");
-		add(new XLabel.Builder("*Name:").labelFor(this.txtName).build(), "cell 1 3");
-		add(new XLabel.Builder("*Description:").labelFor(this.txtFullname).build(), "cell 1 4");
-		add(new XLabel.Builder("Serial:").labelFor(this.txtSerial).build(), "cell 1 6");
-		add(new XLabel.Builder("Buying date:").labelFor(this.datePicker).build(), "cell 1 7");
-		add(new XLabel.Builder("Warranty:").labelFor(this.ftxtWarranty).build(), "cell 1 8");
-		add(new XLabel.Builder("Price:").labelFor(this.ftxtPrice).build(), "cell 1 9");
-		add(new XLabel.Builder("Order:").labelFor(this.txtOrder).build(), "cell 1 10");
-		add(new XLabel.Builder("Invoice:").labelFor(this.txtInvoice).build(), "cell 1 11");
-		add(new XLabel.Builder("Customer:").labelFor(this.txtCustomer).build(), "cell 1 12");
-		add(new XLabel.Builder("Shop:").labelFor(this.cboShop).build(), "cell 1 13");
-		add(new XLabel.Builder("Manufacturer:").labelFor(this.cboManu).build(), "cell 1 14");
-		add(new XLabel.Builder("Payed:").labelFor(this.cboPay).build(), "cell 1 15");
-		add(new XLabel.Builder("Comment:").labelFor(this.txtComment).build(), "cell 1 16,aligny top");
+		add(new XLabel.Builder("ID:").labelFor(this.ftxtID).build(), "cell 1 0");
+		add(new XLabel.Builder("*Name:").labelFor(this.txtName).build(), "cell 1 1");
+		add(new XLabel.Builder("*Description:").labelFor(this.txtFullname).build(), "cell 1 2");
+		add(new XLabel.Builder("Serial:").labelFor(this.txtSerial).build(), "cell 1 3");
+		add(new XLabel.Builder("Buying date:").labelFor(this.datePicker).build(), "cell 1 4");
+		add(new XLabel.Builder("Warranty:").labelFor(this.ftxtWarranty).build(), "cell 1 5");
+		add(new XLabel.Builder("Price:").labelFor(this.ftxtPrice).build(), "cell 1 6");
+		add(new XLabel.Builder("Order:").labelFor(this.txtOrder).build(), "cell 1 7");
+		add(new XLabel.Builder("Invoice:").labelFor(this.txtInvoice).build(), "cell 1 8");
+		add(new XLabel.Builder("Customer:").labelFor(this.txtCustomer).build(), "cell 1 9");
+		add(new XLabel.Builder("Shop:").labelFor(this.cboShop).build(), "cell 1 10");
+		add(new XLabel.Builder("Manufacturer:").labelFor(this.cboManu).build(), "cell 1 11");
+		add(new XLabel.Builder("Payed:").labelFor(this.cboPay).build(), "cell 1 12");
+		add(new XLabel.Builder("Comment:").labelFor(this.txtComment).build(), "cell 1 13,aligny top");
 	}
 
 	private void dbOperationDelete() {
@@ -317,12 +314,14 @@ public class Editor extends JPanel {
 	public void loadProduct(Object obj) {
 		if (!(obj instanceof Product)) {
 			resetFields();
-			Utils.setEnabled(Utils.getAllComponents(this), false);
+			com.github.tehnexus.swing.Util.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(this), false);
 			return;
 		}
-		Utils.setEnabled(Utils.getAllComponents(this), true);
+		com.github.tehnexus.swing.Util.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(this), true);
 		currentTreeSelection = (Product) obj;
-
+		
+		this.attachTableView.buildTable(currentTreeSelection);
+		
 		ftxtID.setValue(currentTreeSelection.getId());
 		txtName.setText(currentTreeSelection.getName());
 		txtFullname.setText(currentTreeSelection.getFullname());
@@ -359,8 +358,10 @@ public class Editor extends JPanel {
 		txtComment.setText(null);
 	}
 
-	public void setProperties(Properties properties) {
-		this.products = properties;
+	public void initialize(Properties properties) {
+		products = properties;
+		attachTableView.initialize(properties);
+
 		cboShop.setSource(products.getTypes(Identifier.SHOP));
 		cboManu.setSource(products.getTypes(Identifier.MANUFACTURER));
 		cboPay.setSource(products.getTypes(Identifier.PAYMENT));
@@ -383,11 +384,7 @@ public class Editor extends JPanel {
 			else if (ae.getSource().equals(btnDelete)) {
 				dbOperationDelete();
 			}
-			else if (Util.isAnyOf(ae.getSource(), btnEditShop, btnEditManufacturer, btnAttachment)) {
-				firePropertyChange("propertyEdit", null, ae.getSource());
-			}
 		}
-
 	}
 
 	private class PropertyListener implements PropertyChangeListener {
@@ -398,10 +395,11 @@ public class Editor extends JPanel {
 			switch (pce.getPropertyName()) {
 
 				case "propertyEdit":
-					if (pce.getNewValue().equals(btnAttachment)) {
-						AttachmentTable attEdit = new AttachmentTable(products, currentTreeSelection);
-						attEdit.setVisible(true);
-					}
+					// if (pce.getNewValue().equals(btnAttachment)) {
+					// AttachmentTableView attEdit = new
+					// AttachmentTableView(products, currentTreeSelection);
+					// attEdit.setVisible(true);
+					// }
 
 					// propEdit = new PropertyEditor(cboManu.getSelected());
 					// propEdit.setVisible(true);

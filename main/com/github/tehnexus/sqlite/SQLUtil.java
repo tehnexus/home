@@ -36,14 +36,15 @@ public class SQLUtil {
 		return prop.getProperty("databaselocation") + prop.getProperty("databasename");
 	}
 
-	public static int executePreparedStatement(String sqlString, Object[] args) {
-		int i = 0;
-		try (SQLiteCon connectionSQLite = new SQLiteCon(defaultDatabaseLocation())) {
-			i = connectionSQLite.executePreparedStatement(sqlString, args);
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return i;
+	public static void executePreparedStatement(String sqlString, Object[] args) {
+		Runnable runnable = () -> {
+				try (SQLiteCon connectionSQLite = new SQLiteCon(defaultDatabaseLocation())) {
+					connectionSQLite.executePreparedStatement(sqlString, args);
+				}
+				catch (SQLException e) {
+					e.printStackTrace();
+				}
+		};
+		new Thread(runnable).start();
 	}
 }
