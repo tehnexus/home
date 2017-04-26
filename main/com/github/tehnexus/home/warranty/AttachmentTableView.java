@@ -215,9 +215,7 @@ public class AttachmentTableView extends JPanel {
 		}
 
 		public void clearRecords() {
-			for (int i = data.size() - 1; i > -1; i--) {
-				data.remove(i);
-			}
+			data = new ArrayList<>(0);
 		}
 
 		public void addRecord(Attachment row) {

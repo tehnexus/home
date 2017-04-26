@@ -35,28 +35,11 @@ public class AttachmentViewer extends JDialog {
 	private ImagePanel		panImage;
 
 	private JButton			btnExport		= new JButton("Export");
-	private JButton			btnReset		= new JButton("Reset");
+	private JButton			btnReset		= new JButton("Original Size");
 	private JButton			btnFitPanel		= new JButton("Fit Window");
 	private JButton			btnClose		= new JButton("Close");
 
 	private ActionListener	actionListener	= new ActionListener();
-
-	public Attachment getAttachment() {
-		return attach;
-	}
-
-	public byte[] getFile() {
-		BufferedImage img = panImage.getImage(true);
-
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			ImageIO.write(img, "png", baos);
-			return baos.toByteArray();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	public AttachmentViewer() {
 		createGUI();
@@ -70,42 +53,6 @@ public class AttachmentViewer extends JDialog {
 		createGUI();
 		load(attach);
 		setUpWindow();
-	}
-
-	private void importUserFile() {
-		File file = getUserFile();
-		if (file != null) {
-			try (BufferedInputStream bis = new BufferedInputStream(
-					Files.newInputStream(file.toPath(), StandardOpenOption.READ))) {
-				FileType fileType = FileTypeDetector.detectFileType(bis);
-				if (Util.isAnyOf(fileType, FileType.PNG, FileType.JPEG)) {
-					panImage.setImage(bis);
-				}
-				else if (fileType == FileType.PDF) {
-
-				}
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		else {
-			dispose();
-		}
-	}
-
-	public boolean hasValidFile() {
-		return panImage.hasImage();
-	}
-
-	private File getUserFile() {
-		JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showOpenDialog(this);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			return file;
-		}
-		return null;
 	}
 
 	private void createGUI() {
@@ -140,6 +87,64 @@ public class AttachmentViewer extends JDialog {
 		pack();
 		panImage.grabFocus();
 
+	}
+
+	public Attachment getAttachment() {
+		return attach;
+	}
+
+	public byte[] getFile() {
+		BufferedImage img = panImage.getImage(true);
+
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			ImageIO.write(img, "png", baos);
+			return baos.toByteArray();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(500, 500);
+	}
+
+	private File getUserFile() {
+		JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showOpenDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			return file;
+		}
+		return null;
+	}
+
+	public boolean hasValidFile() {
+		return panImage.hasImage();
+	}
+
+	private void importUserFile() {
+		File file = getUserFile();
+		if (file != null) {
+			try (BufferedInputStream bis = new BufferedInputStream(
+					Files.newInputStream(file.toPath(), StandardOpenOption.READ))) {
+				FileType fileType = FileTypeDetector.detectFileType(bis);
+				if (Util.isAnyOf(fileType, FileType.PNG, FileType.JPEG)) {
+					panImage.setImage(bis);
+				}
+				else if (fileType == FileType.PDF) {
+
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			dispose();
+		}
 	}
 
 	private void load(Attachment attach) throws IOException, SQLException {
@@ -191,20 +196,15 @@ public class AttachmentViewer extends JDialog {
 				dispose();
 			}
 			else if (e.getSource().equals(btnReset)) {
-				panImage.fitImage(SizeFit.IMAGE);
+				panImage.setSizeFit(SizeFit.IMAGE);
 			}
 			else if (e.getSource().equals(btnExport)) {
 				// TODO: export it!
 			}
 			else if (e.getSource().equals(btnFitPanel)) {
-				panImage.fitImage(SizeFit.WINDOW);
+				panImage.setSizeFit(SizeFit.WINDOW);
 			}
 		}
-	}
-
-	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(500, 500);
 	}
 
 }

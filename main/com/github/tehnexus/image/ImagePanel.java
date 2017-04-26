@@ -25,9 +25,27 @@ public class ImagePanel extends JPanel {
 	private Point				location;
 	private BufferedImage		imageOriginal;
 	private BufferedImage		image;
+	private SizeFit				sizeFit		= SizeFit.WINDOW;
 
 	public ImagePanel() {
 		init();
+	}
+
+	public void fitImage() {
+		switch (sizeFit) {
+			case IMAGE:
+				image = imageOriginal;
+				initImageLocation();
+				break;
+			case NONE:
+				break;
+			case WINDOW:
+				resizeImage(0d);
+				break;
+			default:
+				break;
+
+		}
 	}
 
 	public BufferedImage getImage(boolean original) {
@@ -91,8 +109,9 @@ public class ImagePanel extends JPanel {
 		if (scaleFactor == 0d) { // fit window
 			Dimension panDim = new Dimension(getWidth() - MARGIN_PX, getHeight() - MARGIN_PX);
 			Dimension imgDim = new Dimension(image.getWidth(), image.getHeight());
-			imgDim.fitInto(panDim); // TODO: rewrite so fitInto also works for
-									// increasing size of img
+			imgDim.fitInto(panDim, true); // TODO: rewrite so fitInto also works
+											// for
+			// increasing size of img
 			image = ImageHelper.getScaledInstanceToFit(imageOriginal, imgDim);
 		}
 		else { // according to zoom level
@@ -110,27 +129,6 @@ public class ImagePanel extends JPanel {
 		image = imageOriginal;
 
 		initImageLocation();
-	}
-
-	public void validateImageLocation() {
-		setImageLocation(location.x, location.y);
-	}
-
-	public void fitImage(SizeFit fit) {
-		switch (fit) {
-			case IMAGE:
-				image = imageOriginal;
-				initImageLocation();
-				break;
-			case NONE:
-				break;
-			case WINDOW:
-				resizeImage(0d);
-				break;
-			default:
-				break;
-
-		}
 	}
 
 	public boolean setImageLocation(int x, int y) {
@@ -162,6 +160,15 @@ public class ImagePanel extends JPanel {
 	private void setImageLocation(Point p) {
 		location = p;
 		repaint();
+	}
+
+	public void setSizeFit(SizeFit fit) {
+		sizeFit = fit;
+		fitImage();
+	}
+
+	public void validateImageLocation() {
+		setImageLocation(location.x, location.y);
 	}
 
 }

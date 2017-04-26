@@ -15,8 +15,10 @@ public class ImageAdapter extends ComponentAdapter {
 
 	@Override
 	public void componentResized(ComponentEvent e) {
-		if (panImage.hasImage())
+		if (panImage.hasImage()) {
+			panImage.fitImage();
 			panImage.validateImageLocation();
+		}
 	}
 
 }
