@@ -24,6 +24,7 @@ import com.github.tehnexus.home.warranty.classes.Properties;
 import com.github.tehnexus.home.warranty.classes.Property;
 import com.github.tehnexus.swing.XFormattedTextField;
 import com.github.tehnexus.swing.XLabel;
+import com.github.tehnexus.swing.XTextField;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -36,6 +37,8 @@ public class PropertyEditor extends JDialog {
 
 	private JPanel					pan;
 	private XFormattedTextField		ftxtID;
+	private XTextField				txtFullname;
+	private XTextField				txtName;
 
 	private HashMap<String, Object>	fields				= new HashMap<>(0);
 	private boolean					isNew;
@@ -91,13 +94,21 @@ public class PropertyEditor extends JDialog {
 		}
 
 		// Create and add fields
-
 		pan.setLayout(new MigLayout("", "[fill][grow,fill]", "[][]"));
-		//
+
 		ftxtID = new XFormattedTextField.Builder(pan, formatterID).editable(false).font(XFont.FONT_MONOSPACED)
 				.constraints("cell 1 0,growx").build();
-		pan.add(new XLabel.Builder("ID:").labelFor(ftxtID).build(), "cell 0 0");
 
+		txtName = new XTextField.Builder(pan).font(XFont.FONT_DEFAULT).constraints("cell 1 1,growx").build();
+		
+		txtFullname = new XTextField.Builder(pan).font(XFont.FONT_DEFAULT).constraints("cell 1 2,growx").build();
+
+		// labels
+		pan.add(new XLabel.Builder("ID:").labelFor(ftxtID).build(), "cell 0 0");
+		pan.add(new XLabel.Builder("Name:").labelFor(txtName).build(), "cell 0 1");
+		pan.add(new XLabel.Builder("Description:").labelFor(txtFullname).build(), "cell 0 2");
+		
+		
 		// add buttons
 		pan.add(btnSave, "cell 1 9");
 		btnSave.addActionListener(buttonListener);

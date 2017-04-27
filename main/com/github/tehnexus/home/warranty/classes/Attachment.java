@@ -6,11 +6,13 @@ import com.github.tehnexus.sqlite.SQLUtil;
 
 public class Attachment extends Property {
 
-	private String comment = "";
+	private String	comment;
+	private boolean	isThumb;
 
 	private Attachment(Builder builder) {
 		super(builder.id, "");
 		comment = builder.comment;
+		isThumb = builder.isThumb;
 
 		setIdForeign(builder.idForeign);
 
@@ -24,6 +26,10 @@ public class Attachment extends Property {
 		return comment;
 	}
 
+	public boolean isThumb() {
+		return isThumb;
+	}
+
 	public void propertyChange() {
 		String sqlString = SQLStrings.updatetblAttachment();
 		Object[] args = new Object[] { getType(Identifier.ATTACHMENTTYPE).get(0).getId(), getComment(), getId() };
@@ -34,6 +40,10 @@ public class Attachment extends Property {
 		this.comment = comment;
 	}
 
+	public void setIsThumb(boolean b) {
+		isThumb = b;
+	}
+
 	public static class Builder {
 
 		private int			id;
@@ -41,6 +51,7 @@ public class Attachment extends Property {
 		private int			idType;
 		private Property	type	= null;
 		private int			idForeign;
+		private boolean		isThumb	= false;
 
 		public Builder(int id) {
 			this.id = id;
@@ -59,6 +70,11 @@ public class Attachment extends Property {
 
 		public Builder idForeign(int idForeign) {
 			this.idForeign = idForeign;
+			return this;
+		}
+
+		public Builder thumb(boolean isThumb) {
+			this.isThumb = isThumb;
 			return this;
 		}
 

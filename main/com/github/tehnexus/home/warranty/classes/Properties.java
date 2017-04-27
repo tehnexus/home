@@ -45,8 +45,10 @@ public class Properties extends HashMap<Integer, Property> {
 			int idForeign = rs.getInt(2);
 			int idType = rs.getInt(3);
 			String comment = rs.getString(5);
+			int isThumb = rs.getInt(6);
 
-			Attachment attach = new Attachment.Builder(id).comment(comment).idForeign(idForeign).typeId(idType).build();
+			Attachment attach = new Attachment.Builder(id).comment(comment).idForeign(idForeign).typeId(idType)
+					.thumb(isThumb == 1).build();
 
 			put(attach.getId(), attach);
 		}

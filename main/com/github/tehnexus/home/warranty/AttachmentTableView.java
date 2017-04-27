@@ -8,6 +8,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -32,12 +36,16 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 
+import com.github.tehnexus.exception.UnsupportedFileTypeException;
+import com.github.tehnexus.filetypedetector.FileType;
+import com.github.tehnexus.filetypedetector.FileTypeDetector;
 import com.github.tehnexus.home.util.Identifier;
 import com.github.tehnexus.home.util.Util;
 import com.github.tehnexus.home.warranty.classes.Attachment;
 import com.github.tehnexus.home.warranty.classes.Product;
 import com.github.tehnexus.home.warranty.classes.Properties;
 import com.github.tehnexus.home.warranty.classes.Property;
+import com.github.tehnexus.image.ImagePanel;
 import com.github.tehnexus.sqlite.SQLStrings;
 import com.github.tehnexus.sqlite.SQLUtil;
 
@@ -52,6 +60,7 @@ public class AttachmentTableView extends JPanel {
 
 	// private JButton btnExport = new JButton("Export");
 	private JTable											table			= new JTable();
+	private ImagePanel										panThumb;
 
 	public AttachmentTableView() {
 		createGUI();
@@ -71,7 +80,7 @@ public class AttachmentTableView extends JPanel {
 		Property attachmentType = attAttachmentTypes.get(0);
 
 		String sqlString = SQLStrings.insertIntotblAttachment();
-		Object[] args = new Object[] { id, product.getId(), attachmentType.getId(), attViewer.getFile(), "" };
+		Object[] args = new Object[] { id, product.getId(), attachmentType.getId(), attViewer.getFile(), "", 0 };
 		SQLUtil.executePreparedStatement(sqlString, args);
 
 		Attachment attach = new Attachment.Builder(id).comment(null).type(attachmentType).idForeign(product.getId())
@@ -95,6 +104,7 @@ public class AttachmentTableView extends JPanel {
 		this.product = product;
 		loadAttachmentViewers();
 		tableModel.clearRecords();
+		panThumb.clear();
 
 		// loop attachments in of this product and add to tablemodel
 		List<Property> listAttachment = product.getType(Identifier.ATTACHMENT);
@@ -102,9 +112,51 @@ public class AttachmentTableView extends JPanel {
 			for (Property p : listAttachment) {
 				Attachment attach = (Attachment) p;
 				tableModel.addRecord(attach);
+
+				if (attach.isThumb())
+					buildThumbImage(attach);
+
 			}
 		}
 		tableModel.fireTableDataChanged();
+	}
+
+	private void buildThumbImage(Attachment attach) {
+		SwingUtilities.invokeLater(() -> {
+
+			try (InputStream inputStream = SQLUtil.blobFromDatabase(SQLStrings.queryAttachments(attach.getId()))) {
+				FileType fileType = FileTypeDetector.detectFileType(inputStream);
+
+				if (Util.isAnyOf(fileType, FileType.PNG, FileType.JPEG))
+					panThumb.setImage(inputStream);
+				else
+					throw new UnsupportedFileTypeException();
+			}
+			catch (IOException | SQLException | UnsupportedFileTypeException e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	private void setAttachmentAsThumb() {
+		Attachment attach = getSelectedAttachment();
+
+		// clear thumb status for product
+		String sqlString = "UPDATE tblAttachment SET isThumb=0 WHERE ProductID=?";
+		SQLUtil.executePreparedStatement(sqlString, attach.getIdForeign());
+
+		List<Property> assignedAttachments = product.getType(Identifier.ATTACHMENT);
+		for (Property p : assignedAttachments) {
+			Attachment a = (Attachment) p;
+			a.setIsThumb(false);
+		}
+
+		// assign thumb
+		attach.setIsThumb(true);
+		sqlString = "UPDATE tblAttachment SET isThumb=1 WHERE ID=?";
+		SQLUtil.executePreparedStatement(sqlString, attach.getId());
+
+		buildThumbImage(attach);
 	}
 
 	private void createGUI() {
@@ -115,21 +167,35 @@ public class AttachmentTableView extends JPanel {
 
 		JMenuItem deleteItem = new JMenuItem("Delete", Util.getIcon("images/1492965615_f-cross_256.png", 16));
 		deleteItem.setActionCommand(deleteItem.getText());
+		deleteItem.addActionListener(new TablePopupMenuAction(deleteItem));
+
+		JMenuItem setAsThumbItem = new JMenuItem("Set as Thumb");
+		setAsThumbItem.setActionCommand(setAsThumbItem.getText());
+		setAsThumbItem.addActionListener(new TablePopupMenuAction(setAsThumbItem));
+
 		JMenuItem addItem = new JMenuItem("Add", Util.getIcon("images/1492965666_f-top_256.png", 16));
 		addItem.setActionCommand(addItem.getText());
+		addItem.addActionListener(new TablePopupMenuAction(addItem));
 
 		popupMenu.add(deleteItem);
+		popupMenu.add(setAsThumbItem);
+		popupMenu.addSeparator();
 		popupMenu.add(addItem);
-		deleteItem.addActionListener(new TablePopupMenuAction(deleteItem));
-		addItem.addActionListener(new TablePopupMenuAction(addItem));
 
 		table.setComponentPopupMenu(popupMenu);
 		table.getTableHeader().setComponentPopupMenu(popupMenu);
-		// table.addMouseListener(new TablePopupMenuListener(popupMenu));
-
 		table.setRowHeight(25);
+
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		add(splitPane, BorderLayout.CENTER);
+
 		JScrollPane scrollPane = new JScrollPane(table);
-		add(scrollPane, BorderLayout.CENTER);
+		splitPane.setTopComponent(scrollPane);
+
+		panThumb = new ImagePanel(false, false);
+		panThumb.setMargin_px(0);
+
+		splitPane.setBottomComponent(panThumb);
 	}
 
 	public void initialize(Properties properties) {
@@ -189,6 +255,13 @@ public class AttachmentTableView extends JPanel {
 		TableButtonColumn tableButtonColumn = new TableButtonColumn(table, new TableButtonAction(), 2);
 	}
 
+	private Attachment getSelectedAttachment() {
+		int tableRow = table.getSelectedRow();
+		if (tableRow < 0)
+			return null;
+		return tableModel.getAttachmentAt(table.convertRowIndexToModel(tableRow));
+	}
+
 	private void removeAttachment() {
 
 		ConfirmDialog dialog = new ConfirmDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Delete Attachment",
@@ -196,12 +269,10 @@ public class AttachmentTableView extends JPanel {
 		if (!dialog.isConfirmed())
 			return;
 
-		int tableRow = table.getSelectedRow();
-		Attachment attach = tableModel.getAttachmentAt(table.convertRowIndexToModel(tableRow));
+		Attachment attach = getSelectedAttachment();
 
 		String sqlString = SQLStrings.deleteFromtblAttachment();
-		Object[] args = new Object[] { attach.getId() };
-		SQLUtil.executePreparedStatement(sqlString, args);
+		SQLUtil.executePreparedStatement(sqlString, attach.getId());
 
 		tableModel.removeRecord(attach);
 
@@ -389,6 +460,11 @@ public class AttachmentTableView extends JPanel {
 					case "Add":
 						addAttachmentFromFile();
 						break;
+					case "Set as Thumb":
+						if (tableModel.data.size() == 0)
+							return;
+						setAttachmentAsThumb();
+						break;
 				}
 			}
 		}
@@ -433,6 +509,10 @@ public class AttachmentTableView extends JPanel {
 					JMenuItem item = (JMenuItem) popup.getComponent(0);
 					item.setEnabled(false);
 				}
+
+				Attachment attach = getSelectedAttachment();
+				// TODO: if attachment is not a picture set "Set as Thumb"
+				// disabled
 			});
 		}
 	}

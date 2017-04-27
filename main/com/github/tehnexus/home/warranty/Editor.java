@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
 
@@ -33,6 +34,9 @@ import com.github.tehnexus.swing.XTextArea;
 import com.github.tehnexus.swing.XTextField;
 
 import net.miginfocom.swing.MigLayout;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 
 public class Editor extends JPanel {
 
@@ -72,7 +76,7 @@ public class Editor extends JPanel {
 	private AttachmentTableView	attachTableView;
 
 	public Editor() {
-		setVisible(false);
+		setLayout(new BorderLayout());
 		createGUI();
 		resetFields();
 		com.github.tehnexus.swing.Util.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(this), false);
@@ -87,9 +91,19 @@ public class Editor extends JPanel {
 
 	private void createGUI() {
 
-		setLayout(new MigLayout("",
-				"[3px][fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][3px][250px:250px,grow,fill]",
-				"[][][][][][][][][][][][][][grow][]"));
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		add(splitPane, BorderLayout.CENTER);
+//		JPanel panEditBack = new JPanel(new BorderLayout());
+//		splitPane.setLeftComponent(panEditBack);
+		
+		JPanel panEdit = new JPanel(new MigLayout("", "[3px][fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][3px]", "[][][][][][][][][][][][][][grow][]"));
+
+//		panEditBack.add(panEdit, BorderLayout.CENTER);
+
+		splitPane.setLeftComponent(panEdit);
+		
+		attachTableView = new AttachmentTableView();
+		splitPane.setRightComponent(attachTableView);
 
 		// formatter for id field
 		MaskFormatter formatterID = null;
@@ -120,68 +134,69 @@ public class Editor extends JPanel {
 		formatterPrice.setOverwriteMode(true);
 
 		// Create and add fields
-		ftxtID = new XFormattedTextField.Builder(this, formatterID).editable(false).font(XFont.FONT_MONOSPACED)
+		ftxtID = new XFormattedTextField.Builder(panEdit, formatterID).editable(false).font(XFont.FONT_MONOSPACED)
 				.constraints("cell 2 0,growx").build();
 
-		txtName = new XTextField.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 1 5 1,growx").build();
+		txtName = new XTextField.Builder(panEdit).font(XFont.FONT_DEFAULT).constraints("cell 2 1 5 1,growx").build();
 
-		txtFullname = new XTextField.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 2 5 1,growx").build();
+		txtFullname = new XTextField.Builder(panEdit).font(XFont.FONT_DEFAULT).constraints("cell 2 2 5 1,growx")
+				.build();
 
-		txtSerial = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 3 5 1,growx").build();
+		txtSerial = new XTextField.Builder(panEdit).font(XFont.FONT_MONOSPACED).constraints("cell 2 3 5 1,growx")
+				.build();
 
-		ftxtWarranty = new XFormattedTextField.Builder(this, formatterWarranty).value(2.0).font(XFont.FONT_MONOSPACED)
-				.constraints("cell 2 5 5 1,growx").build();
+		ftxtWarranty = new XFormattedTextField.Builder(panEdit, formatterWarranty).value(2.0)
+				.font(XFont.FONT_MONOSPACED).constraints("cell 2 5 5 1,growx").build();
 
-		ftxtPrice = new XFormattedTextField.Builder(this, formatterPrice).value(.0).font(XFont.FONT_MONOSPACED)
+		ftxtPrice = new XFormattedTextField.Builder(panEdit, formatterPrice).value(.0).font(XFont.FONT_MONOSPACED)
 				.constraints("cell 2 6 5 1,growx").build();
 
-		txtOrder = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 7 5 1,growx").build();
+		txtOrder = new XTextField.Builder(panEdit).font(XFont.FONT_MONOSPACED).constraints("cell 2 7 5 1,growx")
+				.build();
 
-		txtInvoice = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 8 5 1,growx").build();
+		txtInvoice = new XTextField.Builder(panEdit).font(XFont.FONT_MONOSPACED).constraints("cell 2 8 5 1,growx")
+				.build();
 
-		txtCustomer = new XTextField.Builder(this).font(XFont.FONT_MONOSPACED).constraints("cell 2 9 5 1,growx")
+		txtCustomer = new XTextField.Builder(panEdit).font(XFont.FONT_MONOSPACED).constraints("cell 2 9 5 1,growx")
 				.build();
 
 		cboShop = new PropertyComboBox();
 		cboShop.addPropertyChangeListener(propertyListener);
-		add(cboShop, "cell 2 10 4 1,growx");
+		panEdit.add(cboShop, "cell 2 10 4 1,growx");
 
 		// add buttons
 		btnNew.addActionListener(buttonListener);
-		add(btnNew, "cell 3 0");
+		panEdit.add(btnNew, "cell 3 0");
 		btnNew.setFont(XFont.FONT_DEFAULT);
 
 		cboManu = new PropertyComboBox();
 		cboManu.addPropertyChangeListener(propertyListener);
-		add(cboManu, "cell 2 11 4 1,growx");
+		panEdit.add(cboManu, "cell 2 11 4 1,growx");
 
 		cboPay = new PropertyComboBox();
 		cboPay.addPropertyChangeListener(propertyListener);
-		add(cboPay, "cell 2 12 4 1,growx");
+		panEdit.add(cboPay, "cell 2 12 4 1,growx");
 
-		txtComment = new XTextArea.Builder(this).font(XFont.FONT_DEFAULT).constraints("cell 2 13 5 1,grow").build();
+		txtComment = new XTextArea.Builder(panEdit).font(XFont.FONT_DEFAULT).constraints("cell 2 13 5 1,grow").build();
 
 		dateSettings = new DatePickerSettings(Locale.getDefault(Locale.Category.FORMAT));
-		datePicker = new DatePicker(this.dateSettings);
-		add(datePicker, "cell 2 4,growx");
+		datePicker = new DatePicker(dateSettings);
+		panEdit.add(datePicker, "cell 2 4,growx");
 		timeSettings = new TimePickerSettings(Locale.getDefault(Locale.Category.FORMAT));
-		timePicker = new TimePicker(this.timeSettings);
-		add(timePicker, "cell 3 4,growx");
+		timePicker = new TimePicker(timeSettings);
+		panEdit.add(timePicker, "cell 3 4,growx");
 
 		btnEditShop.addActionListener(buttonListener);
-		add(btnEditShop, "cell 6 10,growx");
+		panEdit.add(btnEditShop, "cell 6 10,growx");
 
 		btnEditManufacturer.addActionListener(buttonListener);
-		add(btnEditManufacturer, "cell 6 11,growx");
+		panEdit.add(btnEditManufacturer, "cell 6 11,growx");
 
 		btnDelete.addActionListener(buttonListener);
-		add(btnDelete, "cell 1 14,grow");
+		panEdit.add(btnDelete, "cell 1 14,grow");
 
 		btnSave.addActionListener(buttonListener);
-		add(btnSave, "cell 2 14 5 1,grow");
-
-		attachTableView = new AttachmentTableView();
-		add(attachTableView, "cell 7 0 1 15,grow");
+		panEdit.add(btnSave, "cell 2 14 5 1,grow");
 
 		// Field settings
 		txtComment.setLineWrap(true);
@@ -208,20 +223,20 @@ public class Editor extends JPanel {
 		btnSave.setFont(XFont.FONT_BTNCONFIRM_DEFAULT);
 
 		// Create and add labels
-		add(new XLabel.Builder("ID:").labelFor(this.ftxtID).build(), "cell 1 0");
-		add(new XLabel.Builder("*Name:").labelFor(this.txtName).build(), "cell 1 1");
-		add(new XLabel.Builder("*Description:").labelFor(this.txtFullname).build(), "cell 1 2");
-		add(new XLabel.Builder("Serial:").labelFor(this.txtSerial).build(), "cell 1 3");
-		add(new XLabel.Builder("Buying date:").labelFor(this.datePicker).build(), "cell 1 4");
-		add(new XLabel.Builder("Warranty:").labelFor(this.ftxtWarranty).build(), "cell 1 5");
-		add(new XLabel.Builder("Price:").labelFor(this.ftxtPrice).build(), "cell 1 6");
-		add(new XLabel.Builder("Order:").labelFor(this.txtOrder).build(), "cell 1 7");
-		add(new XLabel.Builder("Invoice:").labelFor(this.txtInvoice).build(), "cell 1 8");
-		add(new XLabel.Builder("Customer:").labelFor(this.txtCustomer).build(), "cell 1 9");
-		add(new XLabel.Builder("Shop:").labelFor(this.cboShop).build(), "cell 1 10");
-		add(new XLabel.Builder("Manufacturer:").labelFor(this.cboManu).build(), "cell 1 11");
-		add(new XLabel.Builder("Payed:").labelFor(this.cboPay).build(), "cell 1 12");
-		add(new XLabel.Builder("Comment:").labelFor(this.txtComment).build(), "cell 1 13,aligny top");
+		panEdit.add(new XLabel.Builder("ID:").labelFor(ftxtID).build(), "cell 1 0");
+		panEdit.add(new XLabel.Builder("Name:").labelFor(txtName).build(), "cell 1 1");
+		panEdit.add(new XLabel.Builder("Description:").labelFor(txtFullname).build(), "cell 1 2");
+		panEdit.add(new XLabel.Builder("Serial:").labelFor(txtSerial).build(), "cell 1 3");
+		panEdit.add(new XLabel.Builder("Buying date:").labelFor(datePicker).build(), "cell 1 4");
+		panEdit.add(new XLabel.Builder("Warranty:").labelFor(ftxtWarranty).build(), "cell 1 5");
+		panEdit.add(new XLabel.Builder("Price:").labelFor(ftxtPrice).build(), "cell 1 6");
+		panEdit.add(new XLabel.Builder("Order:").labelFor(txtOrder).build(), "cell 1 7");
+		panEdit.add(new XLabel.Builder("Invoice:").labelFor(txtInvoice).build(), "cell 1 8");
+		panEdit.add(new XLabel.Builder("Customer:").labelFor(txtCustomer).build(), "cell 1 9");
+		panEdit.add(new XLabel.Builder("Shop:").labelFor(cboShop).build(), "cell 1 10");
+		panEdit.add(new XLabel.Builder("Manufacturer:").labelFor(cboManu).build(), "cell 1 11");
+		panEdit.add(new XLabel.Builder("Payed:").labelFor(cboPay).build(), "cell 1 12");
+		panEdit.add(new XLabel.Builder("Comment:").labelFor(txtComment).build(), "cell 1 13,aligny top");
 	}
 
 	private void dbOperationDelete() {

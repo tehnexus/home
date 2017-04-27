@@ -26,6 +26,7 @@ import com.github.tehnexus.filetypedetector.FileTypeDetector;
 import com.github.tehnexus.home.util.Util;
 import com.github.tehnexus.home.warranty.classes.Attachment;
 import com.github.tehnexus.image.ImagePanel;
+import com.github.tehnexus.image.ImagePreview;
 import com.github.tehnexus.image.SizeFit;
 import com.github.tehnexus.sqlite.SQLStrings;
 import com.github.tehnexus.sqlite.SQLUtil;
@@ -48,7 +49,7 @@ public class AttachmentViewer extends JDialog {
 		setUpWindow();
 	}
 
-	public AttachmentViewer(Attachment attach) throws IOException, SQLException {
+	public AttachmentViewer(Attachment attach) throws IOException, SQLException, UnsupportedFileTypeException {
 		this.attach = attach;
 
 		createGUI();
@@ -87,7 +88,6 @@ public class AttachmentViewer extends JDialog {
 
 		pack();
 		panImage.grabFocus();
-
 	}
 
 	public Attachment getAttachment() {
@@ -116,6 +116,9 @@ public class AttachmentViewer extends JDialog {
 		String defaultFileLocation = Util.getProperty("attachmentFileLocation");
 		File dir = new File(defaultFileLocation);
 		JFileChooser fc = new JFileChooser(dir);
+		ImagePreview previewPane = new ImagePreview();
+		fc.setAccessory(previewPane);
+		fc.addPropertyChangeListener(previewPane);
 		int returnVal = fc.showOpenDialog(this);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -161,7 +164,7 @@ public class AttachmentViewer extends JDialog {
 		}
 	}
 
-	private void load(Attachment attach) throws IOException, SQLException {
+	private void load(Attachment attach) throws UnsupportedFileTypeException, IOException, SQLException {
 
 		try (InputStream inputStream = SQLUtil.blobFromDatabase(SQLStrings.queryAttachments(attach.getId()))) {
 			FileType fileType = FileTypeDetector.detectFileType(inputStream);
@@ -191,7 +194,7 @@ public class AttachmentViewer extends JDialog {
 				// }
 			}
 			else {
-				throw new IOException("File type not supported: " + fileType.toString());
+				throw new UnsupportedFileTypeException();
 			}
 		}
 	}

@@ -15,7 +15,7 @@ public class SQLStrings {
 	}
 
 	public static String insertIntotblAttachment() {
-		return "INSERT INTO tblAttachment(ID,ProductID,TypeID,Attachment,Comment) VALUES(?,?,?,?,?)";
+		return "INSERT INTO tblAttachment(ID,ProductID,TypeID,Attachment,Comment,isThumb) VALUES(?,?,?,?,?,?)";
 	}
 
 	public static String insertIntotblProduct() {

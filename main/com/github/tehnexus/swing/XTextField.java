@@ -39,7 +39,7 @@ public class XTextField extends JTextField {
 		private Color			foreground	= Color.BLACK;
 
 		private Font			font		= XFont.FONT_DEFAULT;
-
+		
 		public Builder(JPanel parent) {
 			this.parent = parent;
 		}

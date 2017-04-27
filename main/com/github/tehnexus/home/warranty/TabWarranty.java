@@ -126,8 +126,10 @@ public class TabWarranty extends JPanel {
 					}
 
 					break;
-
+				case "ancestor":
+					break;
 				default:
+
 					try {
 						throw new IOException("unhandled propertyChangeString: '" + pce.getPropertyName()
 								+ "' in TabWarranty.PropertyListener");

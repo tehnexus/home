@@ -20,15 +20,31 @@ import com.github.tehnexus.image.listeners.XMouseAdapter;
 
 public class ImagePanel extends JPanel {
 
-	private static final int	MARGIN_PX	= 10;
+	private Color			bgColor		= Color.WHITE;
+	private int				margin_px	= 10;
 
-	private Point				location	= new Point(MARGIN_PX, MARGIN_PX);
-	private BufferedImage		imageOriginal;
-	private BufferedImage		image;
-	private SizeFit				sizeFit		= SizeFit.WINDOW;
+	private boolean			allowZoom	= true;
+	private boolean			allowMove	= true;
+	private Point			location	= new Point(margin_px, margin_px);
+
+	private BufferedImage	imageOriginal;
+	private BufferedImage	image;
+	private SizeFit			sizeFit		= SizeFit.WINDOW;
 
 	public ImagePanel() {
 		init();
+	}
+
+	public ImagePanel(boolean allowZoom, boolean allowMove) {
+		this.allowZoom = allowZoom;
+		this.allowMove = allowMove;
+		init();
+	}
+
+	public void clear() {
+		imageOriginal = null;
+		image = null;
+		repaint();
 	}
 
 	public void fitImage() {
@@ -73,7 +89,7 @@ public class ImagePanel extends JPanel {
 	private void init() {
 		setDoubleBuffered(true);
 		setLayout(new BorderLayout());
-		setBackground(Color.BLACK);
+		setBackground(bgColor);
 
 		addComponentListener(new ImageAdapter(this));
 		XMouseAdapter ma = new XMouseAdapter(this);
@@ -89,10 +105,18 @@ public class ImagePanel extends JPanel {
 		Dimension pan = new Dimension(getWidth(), getHeight());
 		Dimension img = new Dimension(image.getWidth(), image.getHeight());
 
-		int x = pan.width > img.width ? (pan.width - img.width) / 2 : MARGIN_PX;
-		int y = pan.height > img.height ? (pan.height - img.height) / 2 : MARGIN_PX;
+		int x = pan.width > img.width ? (pan.width - img.width) / 2 : margin_px;
+		int y = pan.height > img.height ? (pan.height - img.height) / 2 : margin_px;
 
 		setImageLocation(x, y);
+	}
+
+	public boolean isAllowMove() {
+		return allowMove;
+	}
+
+	public boolean isAllowZoom() {
+		return allowZoom;
 	}
 
 	@Override
@@ -107,7 +131,7 @@ public class ImagePanel extends JPanel {
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
 		if (scaleFactor == 0d) { // fit window
-			Dimension panDim = new Dimension(getWidth() - MARGIN_PX, getHeight() - MARGIN_PX);
+			Dimension panDim = new Dimension(getWidth() - margin_px, getHeight() - margin_px);
 			Dimension imgDim = new Dimension(image.getWidth(), image.getHeight());
 			imgDim.fitInto(panDim, true);
 			image = ImageHelper.getScaledInstanceToFit(imageOriginal, imgDim);
@@ -120,6 +144,10 @@ public class ImagePanel extends JPanel {
 
 		validateImageLocation();
 		setCursor(Cursor.getDefaultCursor());
+	}
+
+	public void setBgColor(Color bgColor) {
+		this.bgColor = bgColor;
 	}
 
 	public void setImage(InputStream inputStream) throws IOException {
@@ -136,12 +164,12 @@ public class ImagePanel extends JPanel {
 		Dimension imgDim = new Dimension(image.getWidth(), image.getHeight());
 
 		// moved in
-		x = x > MARGIN_PX ? MARGIN_PX : x;
-		y = y > MARGIN_PX ? MARGIN_PX : y;
+		x = x > margin_px ? margin_px : x;
+		y = y > margin_px ? margin_px : y;
 
 		// moved out
-		x = imgDim.width + x + MARGIN_PX < getWidth() ? x + Math.abs(imgDim.width + x - getWidth()) - MARGIN_PX : x;
-		y = imgDim.height + y + MARGIN_PX < getHeight() ? y + Math.abs(imgDim.height + y - getHeight()) - MARGIN_PX : y;
+		x = imgDim.width + x + margin_px < getWidth() ? x + Math.abs(imgDim.width + x - getWidth()) - margin_px : x;
+		y = imgDim.height + y + margin_px < getHeight() ? y + Math.abs(imgDim.height + y - getHeight()) - margin_px : y;
 
 		// center image if image smaller than panel
 		x = panDim.width > imgDim.width ? (panDim.width - imgDim.width) / 2 : x;
@@ -159,6 +187,10 @@ public class ImagePanel extends JPanel {
 	private void setImageLocation(Point p) {
 		location = p;
 		repaint();
+	}
+
+	public void setMargin_px(int margin_px) {
+		this.margin_px = margin_px;
 	}
 
 	public void setSizeFit(SizeFit fit) {
