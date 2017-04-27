@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Encapsulates various utilities for windows (ie: <code>Frame</code> and <code>Dialog</code>
- * objects and descendants, in particular).
+ * Encapsulates various utilities for windows (ie: <code>Frame</code> and
+ * <code>Dialog</code> objects and descendants, in particular).
  *
  * @author Richard Bair
  */

@@ -22,7 +22,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.github.tehnexus.home.util.Identifier;
 import com.github.tehnexus.home.warranty.classes.Properties;
-import com.github.tehnexus.home.warranty.tree.nodes.Root;
 import com.github.tehnexus.swing.XTree;
 
 import net.miginfocom.swing.MigLayout;
@@ -59,64 +58,6 @@ public class TreePanel extends JPanel implements ActionListener, TreeSelectionLi
 		}
 	}
 
-	public XTreeNode getRoot() {
-		return treeModel.getRoot();
-	}
-
-	public void refresh(boolean isNewTree) {
-		if (isNewTree) {
-			treeModel = new XTreeModel(treeRoot);
-			xTree.setModel(treeModel);
-			treeModel.sort();
-			return;
-		}
-		treeModel.setRoot(treeRoot);
-		treeModel.sort();
-
-		TreeStrings filter = TreeStrings.getObject(comboBoxFilter.getSelectedItem().toString());
-		if (!chckbxFilter.isSelected())
-			filter = TreeStrings.FLTR_OFF;
-
-		treeModel.setFilter(filter);
-
-		TreeStrings group = TreeStrings.getObject(comboBoxGroup.getSelectedItem().toString());
-		if (!chckbxGroup.isSelected())
-			group = TreeStrings.GRP_OFF;
-
-		switch (group) {
-		case GRP_BYMANU:
-			treeRoot = new Root(products.getTypes(Identifier.MANUFACTURER));
-			break;
-
-		case GRP_BYSHOP:
-			treeRoot = new Root(products.getTypes(Identifier.SHOP));
-			break;
-
-		case GRP_OFF:
-			treeRoot = new Root(products);
-			break;
-
-		default:
-			break;
-		}
-		treeModel.setRoot(treeRoot);
-		treeModel.sort();
-	}
-
-	public void selectTreeRoot() {
-		xTree.setRootSelectionPath();
-	}
-
-	public void setProducts(Properties products) {
-		this.products = products;
-		treeRoot = new Root(products);
-	}
-
-	@Override
-	public void valueChanged(TreeSelectionEvent e) {
-		firePropertyChange("treeSelectionEvent", null, xTree.getLastSelectedPathComponent());
-	}
-
 	private void createGUI() {
 		setLayout(new MigLayout("", "[150px,grow,fill][150px,grow,fill]", "[fill][grow,fill][fill]"));
 
@@ -124,7 +65,7 @@ public class TreePanel extends JPanel implements ActionListener, TreeSelectionLi
 		comboBoxGroup = new JComboBox<>(
 				new String[] { TreeStrings.GRP_BYSHOP.getText(), TreeStrings.GRP_BYMANU.getText() });
 		comboBoxGroup.setAction(new ActionComboBox("comboBoxGroupBy", null));
-		comboBoxGroup.setEnabled(false);
+		// comboBoxGroup.setEnabled(false);
 		add(comboBoxGroup, "cell 1 0,growx");
 		chckbxGroup = new JCheckBox(new ActionCheckBox("Group by:", null, comboBoxGroup, AC_GRP));
 		add(chckbxGroup, "cell 0 0");
@@ -159,6 +100,64 @@ public class TreePanel extends JPanel implements ActionListener, TreeSelectionLi
 
 		System.err.println("Couldn't find file: " + path);
 		return null;
+	}
+
+	public XTreeNode getRoot() {
+		return treeModel.getRoot();
+	}
+
+	public void refresh(boolean isNewTree) {
+		if (isNewTree) {
+			treeModel = new XTreeModel(treeRoot);
+			xTree.setModel(treeModel);
+			treeModel.sort();
+			return;
+		}
+		// treeModel.setRoot(treeRoot);
+		// treeModel.sort();
+
+		TreeStrings filter = TreeStrings.getObject(comboBoxFilter.getSelectedItem().toString());
+		if (!chckbxFilter.isSelected())
+			filter = TreeStrings.FLTR_OFF;
+
+		treeModel.setFilter(filter);
+
+		TreeStrings group = TreeStrings.getObject(comboBoxGroup.getSelectedItem().toString());
+		if (!chckbxGroup.isSelected())
+			group = TreeStrings.GRP_OFF;
+
+		switch (group) {
+			case GRP_BYMANU:
+				treeRoot = new Root(products.getTypes(Identifier.MANUFACTURER));
+				break;
+
+			case GRP_BYSHOP:
+				treeRoot = new Root(products.getTypes(Identifier.SHOP));
+				break;
+
+			case GRP_OFF:
+				treeRoot = new Root(products);
+				break;
+
+			default:
+				break;
+		}
+		treeModel.setRoot(treeRoot);
+		treeModel.sort();
+	}
+
+	public void selectTreeRoot() {
+		xTree.setRootSelectionPath();
+	}
+
+	public void setProducts(Properties products) {
+		this.products = products;
+		treeRoot = new Root(products);
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent e) {
+		firePropertyChange("treeSelectionEvent", null, xTree.getLastSelectedPathComponent());
 	}
 
 	private class ActionCheckBox extends AbstractAction {
@@ -196,12 +195,18 @@ public class TreePanel extends JPanel implements ActionListener, TreeSelectionLi
 		}
 	}
 
-	class PopupListener extends MouseAdapter {
+	private class PopupListener extends MouseAdapter {
 
 		JPopupMenu popup;
 
-		PopupListener(JPopupMenu popupMenu) {
+		public PopupListener(JPopupMenu popupMenu) {
 			popup = popupMenu;
+		}
+
+		private void maybeShowPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
 		}
 
 		@Override
@@ -213,12 +218,6 @@ public class TreePanel extends JPanel implements ActionListener, TreeSelectionLi
 					validMouseEvent = e;
 					maybeShowPopup(e);
 				}
-			}
-		}
-
-		private void maybeShowPopup(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 	}

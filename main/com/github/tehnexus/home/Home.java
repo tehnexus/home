@@ -24,28 +24,6 @@ public class Home {
 	// Valid values are: "DefaultMetal", "Ocean", and "Test"
 	final static String	THEME		= "Test";
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws SecurityException
-	 */
-	public static void main(String args[]) throws SecurityException {
-
-		initLookAndFeel();
-
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				MainFrame frame = new MainFrame("Home");
-				frame.setSize(1200, 750);
-				frame.setLocationRelativeTo(null);
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				frame.setVisible(true);
-			}
-		});
-	}
-
 	private static void initLookAndFeel() {
 		String lookAndFeel = null;
 
@@ -111,6 +89,24 @@ public class Home {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * @param args
+	 * @throws IOException
+	 * @throws SecurityException
+	 */
+	public static void main(String args[]) throws SecurityException {
+
+		initLookAndFeel();
+
+		javax.swing.SwingUtilities.invokeLater(() -> {
+			MainFrame frame = new MainFrame("Home");
+			frame.setSize(1200, 750);
+			frame.setLocationRelativeTo(null);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setVisible(true);
+		});
 	}
 
 }

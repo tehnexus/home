@@ -29,25 +29,30 @@ import net.miginfocom.swing.MigLayout;
 
 public class PropertyEditor extends JDialog {
 
+	private static boolean validateFields() {
+
+		return true;
+	}
+
 	private JPanel					pan;
-
 	private XFormattedTextField		ftxtID;
-	private HashMap<String, Object>	fields				= new HashMap<>(0);
 
+	private HashMap<String, Object>	fields				= new HashMap<>(0);
 	private boolean					isNew;
 	private boolean					isWindowExited;
 	private Properties				properties;
-	private Property				prop;
 
+	private Property				property;
 	private PropertyListener		propertyListener	= new PropertyListener();
 	private ButtonListener			buttonListener		= new ButtonListener();
+
 	private DialogWindowListener	windowListener		= new DialogWindowListener();
 
 	private JButton					btnSave				= new JButton("Save");
 
-	public PropertyEditor() {
-		createAndShowGUI();
-	}
+	// public PropertyEditor() {
+	// createAndShowGUI();
+	// }
 
 	public PropertyEditor(Properties properties) {
 		this.properties = properties;
@@ -57,17 +62,48 @@ public class PropertyEditor extends JDialog {
 		ftxtID.setValue(properties.getNewId());
 	}
 
-	public PropertyEditor(Property prop) {
-		this.prop = prop;
+	public PropertyEditor(Property property) {
+		this.property = property;
 		isNew = false;
 
 		createAndShowGUI();
-		loadRecord(prop);
+		loadRecord(property);
 	}
 
-	private static boolean validateFields() {
+	private void createAndShowGUI() {
+		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+		setMinimumSize(new Dimension(500, 600));
+		setLocationRelativeTo(null);
+		setLayout(new BorderLayout());
 
-		return true;
+		addWindowListener(windowListener);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+		pan = new JPanel();
+
+		// formatter for id field
+		MaskFormatter formatterID = null;
+		try {
+			formatterID = new MaskFormatter("####");
+		}
+		catch (ParseException e) {
+			System.err.println("formatterID is bad: " + e.getMessage());
+		}
+
+		// Create and add fields
+
+		pan.setLayout(new MigLayout("", "[fill][grow,fill]", "[][]"));
+		//
+		ftxtID = new XFormattedTextField.Builder(pan, formatterID).editable(false).font(XFont.FONT_MONOSPACED)
+				.constraints("cell 1 0,growx").build();
+		pan.add(new XLabel.Builder("ID:").labelFor(ftxtID).build(), "cell 0 0");
+
+		// add buttons
+		pan.add(btnSave, "cell 1 9");
+		btnSave.addActionListener(buttonListener);
+		btnSave.setFont(XFont.FONT_BTNCONFIRM_DEFAULT);
+
+		add(pan);
 	}
 
 	public boolean isNew() {
@@ -102,103 +138,6 @@ public class PropertyEditor extends JDialog {
 			// }
 
 		}
-	}
-
-	private void createAndShowGUI() {
-		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-		setMinimumSize(new Dimension(500, 600));
-		setLocationRelativeTo(null);
-		setLayout(new BorderLayout());
-
-		addWindowListener(windowListener);
-		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-		pan = new JPanel();
-
-		// formatter for id field
-		MaskFormatter formatterID = null;
-		try {
-			formatterID = new MaskFormatter("####");
-		} catch (ParseException e) {
-			System.err.println("formatterID is bad: " + e.getMessage());
-		}
-
-		// Create and add fields
-
-		pan.setLayout(new MigLayout("", "[fill][grow,fill]", "[][]"));
-		//
-		ftxtID = new XFormattedTextField.Builder(pan, formatterID).editable(false).font(XFont.FONT_MONOSPACED)
-				.constraints("cell 1 0,growx").build();
-		pan.add(new XLabel.Builder("ID:").labelFor(ftxtID).build(), "cell 0 0");
-		//
-		// Iterator<Property> it = pp.getProperties().iterator();
-		//
-		// while (it.hasNext()) {
-		// Property p = it.next();
-		//
-		// if (p.hasProperties()) {
-		//
-		// if ((boolean) p.properties().getPropertyValue("displayfield")) {
-		// Object fieldType = p.properties().getPropertyValue("fieldtype");
-		// String label = (String)
-		// p.properties().getPropertyValue("fieldlabel");
-		//
-		// if
-		// (fieldType.toString().equalsIgnoreCase(XTextField.class.toString()))
-		// {
-		//
-		// XTextField txt = new XTextField.Builder(pan)
-		// .font((Font) p.properties().getPropertyValue("fieldfont"))
-		// .constraints(p.properties().getPropertyValue("fieldconstraints")).build();
-		//
-		// pan.add(new XLabel.Builder(label).labelFor(txt).build(),
-		// p.properties().getPropertyValue("fieldlabelconstraints"));
-		//
-		// fields.put(p.getKey(), txt);
-		//
-		// } else if
-		// (fieldType.toString().equalsIgnoreCase(XTextArea.class.toString())) {
-		//
-		// XTextArea area = new XTextArea.Builder(pan)
-		// .font((Font) p.properties().getPropertyValue("fieldfont"))
-		// .constraints(p.properties().getPropertyValue("fieldconstraints")).build();
-		//
-		// pan.add(new XLabel.Builder(label).labelFor(area).build(),
-		// p.properties().getPropertyValue("fieldlabelconstraints"));
-		//
-		// fields.put(p.getKey(), area);
-		//
-		// } else if
-		// (fieldType.toString().equalsIgnoreCase(PropertyComboBox.class.toString()))
-		// {
-		//
-		//// PropertyComboBox cbo = new
-		// PropertyComboBox.Builder(pan).source(subProperties)
-		//// .constraints(p.properties().getPropertyValue("fieldconstraints")).build();
-		//// cbo.addPropertyChangeListener(propertyListener);
-		////
-		//// pan.add(new XLabel.Builder(label).labelFor(cbo).build(),
-		//// p.properties().getPropertyValue("fieldlabelconstraints"));
-		////
-		//// fields.put(p.getKey(), cbo);
-		//
-		// } else {
-		// throw new NullPointerException(
-		// "Uncovered fieldtype: '" + fieldType.toString() + "' from '" +
-		// pp.getName() + "'");
-		// }
-		//
-		// }
-		// }
-		// }
-		// }
-
-		// add buttons
-		pan.add(btnSave, "cell 1 9");
-		btnSave.addActionListener(buttonListener);
-		btnSave.setFont(XFont.FONT_BTNCONFIRM_DEFAULT);
-
-		add(pan);
 	}
 
 	private void saveShopToDatabase() {

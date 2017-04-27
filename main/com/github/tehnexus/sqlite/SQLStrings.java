@@ -2,6 +2,10 @@ package com.github.tehnexus.sqlite;
 
 public class SQLStrings {
 
+	public static String deleteFromtblAttachment() {
+		return "DELETE FROM tblAttachment WHERE ID=?";
+	}
+
 	public static String deleteFromtblProduct() {
 		return "DELETE FROM tblProduct WHERE ID=?";
 	}
@@ -76,10 +80,6 @@ public class SQLStrings {
 
 	public static String updatetblProductProperties() {
 		return "UPDATE tblProductProperties SET ManufacturerID=?,ShopID=?,PaymentID=? WHERE ProductID=?";
-	}
-
-	public static String deleteFromtblAttachment() {
-		return "DELETE FROM tblAttachment WHERE ID=?";
 	}
 
 }

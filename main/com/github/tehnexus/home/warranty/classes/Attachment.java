@@ -24,14 +24,14 @@ public class Attachment extends Property {
 		return comment;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
 	public void propertyChange() {
 		String sqlString = SQLStrings.updatetblAttachment();
 		Object[] args = new Object[] { getType(Identifier.ATTACHMENTTYPE).get(0).getId(), getComment(), getId() };
 		SQLUtil.executePreparedStatement(sqlString, args);
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public static class Builder {
@@ -62,14 +62,14 @@ public class Attachment extends Property {
 			return this;
 		}
 
-		public Builder typeId(int idType) {
-			this.idType = idType;
-			return this;
-		}
-
 		public Builder type(Property type) {
 			this.type = type;
 			this.idType = type.getId();
+			return this;
+		}
+
+		public Builder typeId(int idType) {
+			this.idType = idType;
 			return this;
 		}
 	}

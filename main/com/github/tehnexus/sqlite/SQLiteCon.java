@@ -25,8 +25,7 @@ public class SQLiteCon implements AutoCloseable {
 		try {
 			pstmt.close();
 		}
-		catch (NullPointerException e) {
-			// e.printStackTrace();
+		catch (NullPointerException ignore) {
 		}
 	}
 
@@ -34,12 +33,22 @@ public class SQLiteCon implements AutoCloseable {
 		c = DriverManager.getConnection("jdbc:sqlite:" + dbLocation);
 	}
 
-	public void executeCommand(String sql) throws SQLException {
-		c.createStatement().execute(sql);
+	public ResultSet executePreparedQueryStatement(String sqlString, Object[] args) throws SQLException {
+		pstmt = c.prepareStatement(sqlString);
+		for (int i = 0; i < args.length; i++) {
+			Object obj = args[i];
+			int parameterIndex = i + 1;
+			if (obj instanceof String) {
+				pstmt.setString(parameterIndex, (String) obj);
+			}
+			else {
+				System.err.println("uncovered datatype: " + obj.toString());
+			}
+		}
+		return pstmt.executeQuery();
 	}
 
 	public int executePreparedStatement(String sqlString, Object[] args) throws SQLException {
-
 		pstmt = c.prepareStatement(sqlString);
 
 		for (int i = 0; i < args.length; i++) {
@@ -63,7 +72,7 @@ public class SQLiteCon implements AutoCloseable {
 			}
 			else if (obj instanceof byte[]) {
 				pstmt.setBytes(parameterIndex, (byte[]) obj);
-				
+
 			}
 			else {
 				System.err.println("uncovered datatype: " + obj.toString());

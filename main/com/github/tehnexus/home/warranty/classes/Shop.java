@@ -23,30 +23,6 @@ public class Shop extends Property {
 		setIdType(Identifier.SHOPTYPE, builder.idType, -1);
 	}
 
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public void setEmail(String eMail) {
-		this.eMail = eMail;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
 	public String getAddress() {
 		return address;
 	}
@@ -69,6 +45,30 @@ public class Shop extends Property {
 
 	public String getPhone() {
 		return phone;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public void setEmail(String eMail) {
+		this.eMail = eMail;
+	}
+
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public String toLowerString() {
@@ -130,6 +130,11 @@ public class Shop extends Property {
 			return this;
 		}
 
+		public Builder idType(int id) {
+			this.idType = id;
+			return this;
+		}
+
 		public Builder name(String name) {
 			this.name = name;
 			return this;
@@ -137,11 +142,6 @@ public class Shop extends Property {
 
 		public Builder phone(String phone) {
 			this.phone = phone;
-			return this;
-		}
-
-		public Builder idType(int id) {
-			this.idType = id;
 			return this;
 		}
 	}

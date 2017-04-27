@@ -164,7 +164,8 @@ public class HomeData {
 
 		@Override
 		protected Properties doInBackground() throws Exception {
-			try (SQLiteCon connectionSQLite = new SQLiteCon(SQLUtil.defaultDatabaseLocation());
+			try (SQLiteCon connectionSQLite = new SQLiteCon(
+					com.github.tehnexus.home.util.Util.defaultDatabaseLocation());
 					ResultSet rs = connectionSQLite.executeQuery(sql)) {
 
 				return new Properties(identifier, rs);

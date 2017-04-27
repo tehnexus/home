@@ -3,6 +3,8 @@ package com.github.tehnexus.image.listeners;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+import javax.swing.SwingUtilities;
+
 import com.github.tehnexus.image.ImagePanel;
 
 public class ImageAdapter extends ComponentAdapter {
@@ -16,8 +18,10 @@ public class ImageAdapter extends ComponentAdapter {
 	@Override
 	public void componentResized(ComponentEvent e) {
 		if (panImage.hasImage()) {
-			panImage.fitImage();
-			panImage.validateImageLocation();
+			SwingUtilities.invokeLater(() -> {
+				panImage.fitImage();
+				panImage.validateImageLocation();
+			});
 		}
 	}
 

@@ -16,16 +16,8 @@ import javax.swing.tree.TreePath;
 public class XTreeModel implements TreeModel {
 
 	// JDK 1.8.0
-	private static Comparator<XTreeNode>	tnc					= Comparator.comparing(XTreeNode::isLeaf)
+	private static Comparator<XTreeNode> tnc = Comparator.comparing(XTreeNode::isLeaf)
 			.thenComparing(n -> n.toString().toLowerCase());
-	private Vector<TreeModelListener>		treeModelListeners	= new Vector<>();
-	private XTreeNode						root;
-
-	private TreeStrings						filter				= TreeStrings.FLTR_OFF;
-
-	public XTreeModel(XTreeNode root) {
-		this.root = root;
-	}
 
 	private static void sort(XTreeNode parent) {
 		int n = parent.getChildCount();
@@ -38,6 +30,15 @@ public class XTreeModel implements TreeModel {
 		for (MutableTreeNode node : children) {
 			parent.add(node);
 		}
+		System.out.println("sorted");
+	}
+
+	private Vector<TreeModelListener>	treeModelListeners	= new Vector<>();
+	private XTreeNode					root;
+	private TreeStrings					filter				= TreeStrings.FLTR_OFF;
+
+	public XTreeModel(XTreeNode root) {
+		this.root = root;
 	}
 
 	/**
@@ -46,6 +47,17 @@ public class XTreeModel implements TreeModel {
 	@Override
 	public void addTreeModelListener(TreeModelListener l) {
 		treeModelListeners.addElement(l);
+	}
+
+	/**
+	 * The only event raised by this model is TreeStructureChanged with the root
+	 * as path, i.e. the whole tree has changed.
+	 */
+	protected void fireTreeStructureChanged(XTreeNode oldRoot) {
+		TreeModelEvent e = new TreeModelEvent(this, new Object[] { oldRoot });
+		for (TreeModelListener tml : treeModelListeners) {
+			tml.treeStructureChanged(e);
+		}
 	}
 
 	/**
@@ -60,6 +72,8 @@ public class XTreeModel implements TreeModel {
 		return o.getChildAt(o, index, filter);
 	}
 
+	//////////////// Fire events //////////////////////////////////////////////
+
 	/**
 	 * Returns the number of children of parent.
 	 */
@@ -72,7 +86,7 @@ public class XTreeModel implements TreeModel {
 		return o.getChildCount(o, filter);
 	}
 
-	//////////////// Fire events //////////////////////////////////////////////
+	//////////////// TreeModel interface implementation ///////////////////////
 
 	/**
 	 * Returns the index of child in parent.
@@ -82,8 +96,6 @@ public class XTreeModel implements TreeModel {
 		System.err.println("getIndexOfChild");
 		return -1;
 	}
-
-	//////////////// TreeModel interface implementation ///////////////////////
 
 	/**
 	 * Returns the root of the tree.
@@ -115,7 +127,8 @@ public class XTreeModel implements TreeModel {
 	}
 
 	/**
-	 * Used to toggle between show ancestors/show descendant and to change the root of the tree.
+	 * Used to toggle between show ancestors/show descendant and to change the
+	 * root of the tree.
 	 */
 	public void setRoot(XTreeNode newRoot) {
 		XTreeNode oldRoot = root;
@@ -123,7 +136,6 @@ public class XTreeModel implements TreeModel {
 			root = newRoot;
 		}
 		fireTreeStructureChanged(oldRoot);
-		return;
 	}
 
 	public void sort() {
@@ -134,25 +146,15 @@ public class XTreeModel implements TreeModel {
 				sort(node);
 			}
 		}
+		fireTreeStructureChanged(root);
 	}
 
 	/**
-	 * Messaged when the user has altered the value for the item identified by path to newValue. Not
-	 * used by this model.
+	 * Messaged when the user has altered the value for the item identified by
+	 * path to newValue. Not used by this model.
 	 */
 	@Override
 	public void valueForPathChanged(TreePath path, Object newValue) {
 		System.out.println("*** valueForPathChanged : " + path + " --> " + newValue);
-	}
-
-	/**
-	 * The only event raised by this model is TreeStructureChanged with the root as path, i.e. the
-	 * whole tree has changed.
-	 */
-	protected void fireTreeStructureChanged(XTreeNode oldRoot) {
-		TreeModelEvent e = new TreeModelEvent(this, new Object[] { oldRoot });
-		for (TreeModelListener tml : treeModelListeners) {
-			tml.treeStructureChanged(e);
-		}
 	}
 }

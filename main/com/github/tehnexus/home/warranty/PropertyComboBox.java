@@ -26,6 +26,14 @@ public class PropertyComboBox extends JComboBox<Property> {
 		addActionListener(new ComboListener(this));
 	}
 
+	private void addNew() {
+		firePropertyChange("propertyNew", null, source);
+	}
+
+	public Property getSelectedProperty() {
+		return (Property) this.getSelectedItem();
+	}
+
 	public void setSource(Properties source) {
 		this.source = source;
 
@@ -33,14 +41,6 @@ public class PropertyComboBox extends JComboBox<Property> {
 		source.put(-88, new Property(-88, Editor.PLACEHOLDER_NEW, true));
 
 		setModel(new ComboModel(source));
-	}
-
-	public Property getSelectedProperty() {
-		return (Property) this.getSelectedItem();
-	}
-
-	private void addNew() {
-		firePropertyChange("propertyNew", null, source);
 	}
 
 	private class ComboListener implements ActionListener {
@@ -97,8 +97,6 @@ public class PropertyComboBox extends JComboBox<Property> {
 
 		@Override
 		public void addListDataListener(ListDataListener l) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
@@ -134,8 +132,6 @@ public class PropertyComboBox extends JComboBox<Property> {
 
 		@Override
 		public void removeListDataListener(ListDataListener l) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override

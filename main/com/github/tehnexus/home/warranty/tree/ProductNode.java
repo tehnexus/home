@@ -1,7 +1,6 @@
-package com.github.tehnexus.home.warranty.tree.nodes;
+package com.github.tehnexus.home.warranty.tree;
 
 import com.github.tehnexus.home.warranty.classes.Product;
-import com.github.tehnexus.home.warranty.tree.XTreeNode;
 
 public final class ProductNode extends XTreeNode {
 

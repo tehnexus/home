@@ -10,12 +10,6 @@ public enum TreeStrings {
 	GRP_BYMANU("Manufacturer"),
 	GRP_OFF("");
 
-	private final String text;
-
-	TreeStrings(String text) {
-		this.text = text;
-	}
-
 	public static TreeStrings getObject(String text) {
 		for (TreeStrings obj : TreeStrings.values()) {
 			if (obj.getText().equalsIgnoreCase(text)) {
@@ -23,6 +17,12 @@ public enum TreeStrings {
 			}
 		}
 		return null;
+	}
+
+	private final String text;
+
+	TreeStrings(String text) {
+		this.text = text;
 	}
 
 	public String getText() {

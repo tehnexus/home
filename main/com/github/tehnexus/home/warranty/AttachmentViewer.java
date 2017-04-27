@@ -20,6 +20,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 import com.github.tehnexus.awt.Dimension;
+import com.github.tehnexus.exception.UnsupportedFileTypeException;
 import com.github.tehnexus.filetypedetector.FileType;
 import com.github.tehnexus.filetypedetector.FileTypeDetector;
 import com.github.tehnexus.home.util.Util;
@@ -112,10 +113,18 @@ public class AttachmentViewer extends JDialog {
 	}
 
 	private File getUserFile() {
-		JFileChooser fc = new JFileChooser();
+		String defaultFileLocation = Util.getProperty("attachmentFileLocation");
+		File dir = new File(defaultFileLocation);
+		JFileChooser fc = new JFileChooser(dir);
 		int returnVal = fc.showOpenDialog(this);
+
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
+
+			String folder = file.getParent();
+			if (!folder.equalsIgnoreCase(defaultFileLocation))
+				Util.setProperty("attachmentFileLocation", folder);
+
 			return file;
 		}
 		return null;
@@ -137,8 +146,13 @@ public class AttachmentViewer extends JDialog {
 				else if (fileType == FileType.PDF) {
 
 				}
+				else
+					throw new UnsupportedFileTypeException("File type not supported.");
 			}
 			catch (IOException e) {
+				e.printStackTrace();
+			}
+			catch (UnsupportedFileTypeException e) {
 				e.printStackTrace();
 			}
 		}

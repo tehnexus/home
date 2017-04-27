@@ -40,14 +40,15 @@ public class FileTypeDetector {
 		// https://en.wikipedia.org/wiki/List_of_file_signatures
 
 		root.addPath(FileType.PDF, "%PDF".getBytes(Charsets.ISO_8859_1));
-		
+
 		root.addPath(FileType.JPEG, new byte[] { (byte) 0xff, (byte) 0xd8 });
 		root.addPath(FileType.TIFF, "II".getBytes(Charsets.ISO_8859_1), new byte[] { 0x2a, 0x00 });
 		root.addPath(FileType.TIFF, "MM".getBytes(Charsets.ISO_8859_1), new byte[] { 0x00, 0x2a });
 		root.addPath(FileType.PSD, "8BPS".getBytes(Charsets.ISO_8859_1));
 		root.addPath(FileType.PNG, new byte[] { (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00,
 				0x0D, 0x49, 0x48, 0x44, 0x52 });
-		// technically there are other very rare magic numbers for OS/2 BMP files...
+		// technically there are other very rare magic numbers for OS/2 BMP
+		// files...
 		root.addPath(FileType.BMP, "BM".getBytes(Charsets.ISO_8859_1));
 		root.addPath(FileType.GIF, "GIF87a".getBytes(Charsets.ISO_8859_1));
 		root.addPath(FileType.GIF, "GIF89a".getBytes(Charsets.ISO_8859_1));
@@ -72,14 +73,12 @@ public class FileTypeDetector {
 		root.addPath(FileType.RW2, "II".getBytes(Charsets.ISO_8859_1), new byte[] { 0x55, 0x00 });
 	}
 
-	private FileTypeDetector() throws Exception {
-	}
-
 	/**
 	 * Examines the a file's first bytes and estimates the file's type.
 	 * <p>
-	 * Requires a {@link BufferedInputStream} in order to mark and reset the stream to the position
-	 * at which it was provided to this method once completed.
+	 * Requires a {@link BufferedInputStream} in order to mark and reset the
+	 * stream to the position at which it was provided to this method once
+	 * completed.
 	 * <p>
 	 * Requires the stream to contain at least eight bytes.
 	 *
@@ -87,7 +86,8 @@ public class FileTypeDetector {
 	 *            an input stream of the file to examine.
 	 * @return the file type.
 	 * @throws IOException
-	 *             if an IO error occurred or the input stream ended unexpectedly.
+	 *             if an IO error occurred or the input stream ended
+	 *             unexpectedly.
 	 */
 	public static FileType detectFileType(final InputStream inputStream) throws IOException {
 		if (!inputStream.markSupported()) {
@@ -109,5 +109,8 @@ public class FileTypeDetector {
 
 		// noinspection ConstantConditions
 		return root.find(bytes);
+	}
+
+	private FileTypeDetector() throws Exception {
 	}
 }

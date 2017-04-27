@@ -57,11 +57,6 @@ public class AttachmentTableView extends JPanel {
 		createGUI();
 	}
 
-	public void initialize(Properties properties) {
-		this.properties = properties;
-		prepareTable();
-	}
-
 	private void addAttachmentFromFile() {
 
 		AttachmentViewer attViewer = new AttachmentViewer();
@@ -90,6 +85,28 @@ public class AttachmentTableView extends JPanel {
 		finishedViewers.put(attach.getId(), attViewer);
 	}
 
+	public void buildTable(Product product) {
+		if (product == null) {
+			tableModel.clearRecords();
+			tableModel.fireTableDataChanged();
+			return;
+		}
+
+		this.product = product;
+		loadAttachmentViewers();
+		tableModel.clearRecords();
+
+		// loop attachments in of this product and add to tablemodel
+		List<Property> listAttachment = product.getType(Identifier.ATTACHMENT);
+		if (listAttachment != null) {
+			for (Property p : listAttachment) {
+				Attachment attach = (Attachment) p;
+				tableModel.addRecord(attach);
+			}
+		}
+		tableModel.fireTableDataChanged();
+	}
+
 	private void createGUI() {
 		setLayout(new BorderLayout());
 
@@ -115,38 +132,9 @@ public class AttachmentTableView extends JPanel {
 		add(scrollPane, BorderLayout.CENTER);
 	}
 
-	private void prepareTable() {
-		// getting all possible values for type combo
-		Properties allAttachTypes = properties.getTypes(Identifier.ATTACHMENT).getTypes(Identifier.ATTACHMENTTYPE);
-		List<Property> allAttachTypesList = new ArrayList<>(allAttachTypes.values());
-
-		tableModel = new AttachmentTableModel(new String[] { "Type", "Comment", "Attachment" });
-		tableModel.addTableModelListener(new AttachTableModelListener());
-		table.setModel(tableModel);
-
-		// set comboBox as editor and renderer for type column
-		ComboCellEditor comboCellEditor = new ComboCellEditor(allAttachTypesList, new TableComboListener());
-		table.setDefaultEditor(Property.class, comboCellEditor);
-		table.setDefaultRenderer(Property.class, new ComboTableCellRenderer());
-
-		// set button as editor and renderer for attachment column
-		TableButtonColumn tableButtonColumn = new TableButtonColumn(table, new TableButtonAction(), 2);
-	}
-
-	public void buildTable(Product product) {
-		this.product = product;
-		loadAttachmentViewers();
-		tableModel.clearRecords();
-
-		// loop attachments in of this product and add to tablemodel
-		List<Property> listAttachment = product.getType(Identifier.ATTACHMENT);
-		if (listAttachment != null) {
-			for (Property p : listAttachment) {
-				Attachment attach = (Attachment) p;
-				tableModel.addRecord(attach);
-			}
-		}
-		tableModel.fireTableDataChanged();
+	public void initialize(Properties properties) {
+		this.properties = properties;
+		prepareTable();
 	}
 
 	private void loadAttachment(int id) {
@@ -182,6 +170,25 @@ public class AttachmentTableView extends JPanel {
 		}
 	}
 
+	@SuppressWarnings("unused")
+	private void prepareTable() {
+		// getting all possible values for type combo
+		Properties allAttachTypes = properties.getTypes(Identifier.ATTACHMENT).getTypes(Identifier.ATTACHMENTTYPE);
+		List<Property> allAttachTypesList = new ArrayList<>(allAttachTypes.values());
+
+		tableModel = new AttachmentTableModel(new String[] { "Type", "Comment", "Attachment" });
+		tableModel.addTableModelListener(new AttachTableModelListener());
+		table.setModel(tableModel);
+
+		// set comboBox as editor and renderer for type column
+		ComboCellEditor comboCellEditor = new ComboCellEditor(allAttachTypesList, new TableComboListener());
+		table.setDefaultEditor(Property.class, comboCellEditor);
+		table.setDefaultRenderer(Property.class, new ComboTableCellRenderer());
+
+		// set button as editor and renderer for attachment column
+		TableButtonColumn tableButtonColumn = new TableButtonColumn(table, new TableButtonAction(), 2);
+	}
+
 	private void removeAttachment() {
 
 		ConfirmDialog dialog = new ConfirmDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Delete Attachment",
@@ -214,13 +221,13 @@ public class AttachmentTableView extends JPanel {
 			this.colNames = columnNames;
 		}
 
-		public void clearRecords() {
-			data = new ArrayList<>(0);
-		}
-
 		public void addRecord(Attachment row) {
 			data.add(row);
 			Collections.sort(data, tnc);
+		}
+
+		public void clearRecords() {
+			data = new ArrayList<>(0);
 		}
 
 		public Attachment getAttachmentAt(int rowIndex) {

@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.ZoneId;
@@ -28,11 +27,11 @@ import com.github.tehnexus.home.warranty.classes.Product;
 import com.github.tehnexus.home.warranty.classes.Properties;
 import com.github.tehnexus.sqlite.SQLStrings;
 import com.github.tehnexus.sqlite.SQLUtil;
-import com.github.tehnexus.sqlite.SQLiteCon;
 import com.github.tehnexus.swing.XFormattedTextField;
 import com.github.tehnexus.swing.XLabel;
 import com.github.tehnexus.swing.XTextArea;
 import com.github.tehnexus.swing.XTextField;
+
 import net.miginfocom.swing.MigLayout;
 
 public class Editor extends JPanel {
@@ -70,7 +69,7 @@ public class Editor extends JPanel {
 
 	private PropertyListener	propertyListener	= new PropertyListener();
 	private ButtonListener		buttonListener		= new ButtonListener();
-	private AttachmentTableView	attachTableView		= new AttachmentTableView();
+	private AttachmentTableView	attachTableView;
 
 	public Editor() {
 		setVisible(false);
@@ -78,6 +77,12 @@ public class Editor extends JPanel {
 		resetFields();
 		com.github.tehnexus.swing.Util.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(this), false);
 		addPropertyChangeListener(propertyListener);
+	}
+
+	public void clear() {
+		attachTableView.buildTable(null);
+		resetFields();
+		com.github.tehnexus.swing.Util.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(this), false);
 	}
 
 	private void createGUI() {
@@ -175,6 +180,7 @@ public class Editor extends JPanel {
 		btnSave.addActionListener(buttonListener);
 		add(btnSave, "cell 2 14 5 1,grow");
 
+		attachTableView = new AttachmentTableView();
 		add(attachTableView, "cell 7 0 1 15,grow");
 
 		// Field settings
@@ -219,23 +225,12 @@ public class Editor extends JPanel {
 	}
 
 	private void dbOperationDelete() {
-		String sql1 = SQLStrings.deleteFromtblProduct();
-		String sql2 = SQLStrings.deleteFromtblProductProperties();
-
 		Object[] args = new Object[] { currentTreeSelection.getId() };
+		SQLUtil.executePreparedStatement(SQLStrings.deleteFromtblProduct(), args);
+		SQLUtil.executePreparedStatement(SQLStrings.deleteFromtblProductProperties(), args);
 
 		products.remove(currentTreeSelection);
-
 		firePropertyChange("sqlDataChange", null, true);
-
-		try (SQLiteCon connectionSQLite = new SQLiteCon(SQLUtil.defaultDatabaseLocation())) {
-			connectionSQLite.executePreparedStatement(sql1, args);
-			connectionSQLite.executePreparedStatement(sql2, args);
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	private void dbOperationInsert() {
@@ -257,24 +252,15 @@ public class Editor extends JPanel {
 
 		products.put(p.getId(), p);
 
-		String sql1 = SQLStrings.insertIntotblProduct();
-		String sql2 = SQLStrings.insertIntotblProductProperties();
-
 		Object[] args1 = new Object[] { p.getId(), txtName.getText(), txtFullname.getText(), txtSerial.getText(),
 				gmt.toEpochSecond(), warranty, price, txtOrder.getText(), txtInvoice.getText(), txtCustomer.getText() };
+		SQLUtil.executePreparedStatement(SQLStrings.insertIntotblProduct(), args1);
 
 		Object[] args2 = new Object[] { p.getId(), cboManu.getSelectedProperty().getId(),
 				cboShop.getSelectedProperty().getId(), cboPay.getSelectedProperty().getId() };
+		SQLUtil.executePreparedStatement(SQLStrings.insertIntotblProductProperties(), args2);
 
 		firePropertyChange("sqlDataChange", null, true);
-
-		try (SQLiteCon connectionSQLite = new SQLiteCon(SQLUtil.defaultDatabaseLocation())) {
-			connectionSQLite.executePreparedStatement(sql1, args1);
-			connectionSQLite.executePreparedStatement(sql2, args2);
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void dbOperationUpdate() {
@@ -292,36 +278,31 @@ public class Editor extends JPanel {
 		p.setType(Identifier.MANUFACTURER, cboManu.getSelectedProperty(), 0);
 		p.setType(Identifier.PAYMENT, cboPay.getSelectedProperty(), 0);
 
-		String sql1 = SQLStrings.updatetblProduct();
-		String sql2 = SQLStrings.updatetblProductProperties();
-
 		Object[] args1 = new Object[] { p.getName(), p.getFullname(), p.getSerial(), gmt.toEpochSecond(),
 				p.getWarranty(), p.getPrice(), p.getOrder(), p.getInvoice(), p.getCustomer(), p.getComment(),
 				p.getId() };
+		SQLUtil.executePreparedStatement(SQLStrings.updatetblProduct(), args1);
 
 		Object[] args2 = new Object[] { p.getType(Identifier.MANUFACTURER).get(0).getId(),
 				p.getType(Identifier.SHOP).get(0).getId(), p.getType(Identifier.PAYMENT).get(0).getId(), p.getId() };
+		SQLUtil.executePreparedStatement(SQLStrings.updatetblProductProperties(), args2);
+	}
 
-		try (SQLiteCon connectionSQLite = new SQLiteCon(SQLUtil.defaultDatabaseLocation())) {
-			connectionSQLite.executePreparedStatement(sql1, args1);
-			connectionSQLite.executePreparedStatement(sql2, args2);
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public void initialize(Properties properties) {
+		products = properties;
+		attachTableView.initialize(properties);
+
+		cboShop.setSource(products.getTypes(Identifier.SHOP));
+		cboManu.setSource(products.getTypes(Identifier.MANUFACTURER));
+		cboPay.setSource(products.getTypes(Identifier.PAYMENT));
 	}
 
 	public void loadProduct(Object obj) {
-		if (!(obj instanceof Product)) {
-			resetFields();
-			com.github.tehnexus.swing.Util.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(this), false);
-			return;
-		}
 		com.github.tehnexus.swing.Util.setEnabled(com.github.tehnexus.swing.Util.getAllComponents(this), true);
 		currentTreeSelection = (Product) obj;
-		
-		this.attachTableView.buildTable(currentTreeSelection);
-		
+
+		attachTableView.buildTable(currentTreeSelection);
+
 		ftxtID.setValue(currentTreeSelection.getId());
 		txtName.setText(currentTreeSelection.getName());
 		txtFullname.setText(currentTreeSelection.getFullname());
@@ -356,15 +337,6 @@ public class Editor extends JPanel {
 		cboPay.setSelectedIndex(0);
 		txtCustomer.setText(null);
 		txtComment.setText(null);
-	}
-
-	public void initialize(Properties properties) {
-		products = properties;
-		attachTableView.initialize(properties);
-
-		cboShop.setSource(products.getTypes(Identifier.SHOP));
-		cboManu.setSource(products.getTypes(Identifier.MANUFACTURER));
-		cboPay.setSource(products.getTypes(Identifier.PAYMENT));
 	}
 
 	private class ButtonListener implements ActionListener {

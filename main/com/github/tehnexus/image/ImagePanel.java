@@ -20,9 +20,9 @@ import com.github.tehnexus.image.listeners.XMouseAdapter;
 
 public class ImagePanel extends JPanel {
 
-	private static final int	MARGIN_PX	= 20;
+	private static final int	MARGIN_PX	= 10;
 
-	private Point				location;
+	private Point				location	= new Point(MARGIN_PX, MARGIN_PX);
 	private BufferedImage		imageOriginal;
 	private BufferedImage		image;
 	private SizeFit				sizeFit		= SizeFit.WINDOW;
@@ -89,8 +89,8 @@ public class ImagePanel extends JPanel {
 		Dimension pan = new Dimension(getWidth(), getHeight());
 		Dimension img = new Dimension(image.getWidth(), image.getHeight());
 
-		int x = pan.width > img.width ? (pan.width - img.width) / 2 : 0;
-		int y = pan.height > img.height ? (pan.height - img.height) / 2 : 0;
+		int x = pan.width > img.width ? (pan.width - img.width) / 2 : MARGIN_PX;
+		int y = pan.height > img.height ? (pan.height - img.height) / 2 : MARGIN_PX;
 
 		setImageLocation(x, y);
 	}
@@ -109,9 +109,7 @@ public class ImagePanel extends JPanel {
 		if (scaleFactor == 0d) { // fit window
 			Dimension panDim = new Dimension(getWidth() - MARGIN_PX, getHeight() - MARGIN_PX);
 			Dimension imgDim = new Dimension(image.getWidth(), image.getHeight());
-			imgDim.fitInto(panDim, true); // TODO: rewrite so fitInto also works
-											// for
-			// increasing size of img
+			imgDim.fitInto(panDim, true);
 			image = ImageHelper.getScaledInstanceToFit(imageOriginal, imgDim);
 		}
 		else { // according to zoom level
@@ -128,6 +126,7 @@ public class ImagePanel extends JPanel {
 		imageOriginal = ImageIO.read(inputStream);
 		image = imageOriginal;
 
+		resizeImage(0d);
 		initImageLocation();
 	}
 
@@ -163,8 +162,10 @@ public class ImagePanel extends JPanel {
 	}
 
 	public void setSizeFit(SizeFit fit) {
-		sizeFit = fit;
-		fitImage();
+		if (fit != sizeFit) {
+			sizeFit = fit;
+			fitImage();
+		}
 	}
 
 	public void validateImageLocation() {

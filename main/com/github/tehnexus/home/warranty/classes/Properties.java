@@ -21,54 +21,22 @@ public class Properties extends HashMap<Integer, Property> {
 		}
 
 		switch (identifier) {
-		case ATTACHMENT:
-			doAttachments(rs);
-			break;
-		case MANUFACTURER:
-			doManufacturers(rs);
-			break;
-		case PRODUCT:
-			doProducts(rs);
-			break;
-		case SHOP:
-			doShops(rs);
-			break;
-		default:
-			break;
+			case ATTACHMENT:
+				doAttachments(rs);
+				break;
+			case MANUFACTURER:
+				doManufacturers(rs);
+				break;
+			case PRODUCT:
+				doProducts(rs);
+				break;
+			case SHOP:
+				doShops(rs);
+				break;
+			default:
+				break;
 		}
 
-	}
-
-	public int getNewId() {
-		int newid = 0;
-		while (true) {
-			newid++;
-			boolean idexists = false;
-			for (int id : keySet()) { // loop product keys (ids)
-				if (newid == id) {
-					idexists = true;
-					break;
-				}
-			}
-			if (!idexists)
-				return newid;
-		}
-	}
-
-	public Identifier getIdentifier() {
-		return identifier;
-	}
-
-	public Properties getTypes(Identifier identifier) {
-		return allTypes.get(identifier);
-	}
-
-	public void setTypeValues(Identifier identifier, Properties allTypes, boolean isForeign) {
-		this.allTypes.put(identifier, allTypes);
-		if (isForeign)
-			setForeignTypes(allTypes, identifier);
-		else
-			setTypes(allTypes, identifier);
 	}
 
 	private void doAttachments(ResultSet rs) throws SQLException {
@@ -156,6 +124,30 @@ public class Properties extends HashMap<Integer, Property> {
 		}
 	}
 
+	public Identifier getIdentifier() {
+		return identifier;
+	}
+
+	public int getNewId() {
+		int newid = 0;
+		while (true) {
+			newid++;
+			boolean idexists = false;
+			for (int id : keySet()) { // loop product keys (ids)
+				if (newid == id) {
+					idexists = true;
+					break;
+				}
+			}
+			if (!idexists)
+				return newid;
+		}
+	}
+
+	public Properties getTypes(Identifier identifier) {
+		return allTypes.get(identifier);
+	}
+
 	private void setForeignTypes(Properties allTypes, Identifier identifier) {
 		for (Entry<Integer, Property> eParent : entrySet()) {
 
@@ -163,7 +155,8 @@ public class Properties extends HashMap<Integer, Property> {
 			for (Entry<Integer, Property> eChild : allTypes.entrySet()) {
 
 				Property child = eChild.getValue();
-				if (child.getIdForeign() == parent.getId()) { // assign attachments
+				if (child.getIdForeign() == parent.getId()) { // assign
+																// attachments
 					parent.setType(identifier, child, -1);
 				}
 			}
@@ -185,5 +178,13 @@ public class Properties extends HashMap<Integer, Property> {
 			}
 		}
 		return;
+	}
+
+	public void setTypeValues(Identifier identifier, Properties allTypes, boolean isForeign) {
+		this.allTypes.put(identifier, allTypes);
+		if (isForeign)
+			setForeignTypes(allTypes, identifier);
+		else
+			setTypes(allTypes, identifier);
 	}
 }

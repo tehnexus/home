@@ -1,10 +1,9 @@
-package com.github.tehnexus.home.warranty.tree.nodes;
+package com.github.tehnexus.home.warranty.tree;
 
 import java.util.Map.Entry;
 
 import com.github.tehnexus.home.warranty.classes.Properties;
 import com.github.tehnexus.home.warranty.classes.Property;
-import com.github.tehnexus.home.warranty.tree.XTreeNode;
 
 public class Root extends XTreeNode {
 
@@ -16,6 +15,16 @@ public class Root extends XTreeNode {
 		addChildren();
 	}
 
+	private void addChildren() {
+		removeAllChildren();
+		for (Entry<Integer, Property> e : childrenSource.entrySet()) {
+			Property property = e.getValue();
+			if (!property.isDummy()) {
+				add(property);
+			}
+		}
+	}
+
 	public Properties getChildrenSource() {
 		return childrenSource;
 	}
@@ -23,12 +32,6 @@ public class Root extends XTreeNode {
 	@Override
 	public String toString() {
 		return "Products";
-	}
-
-	private void addChildren() {
-		for (Entry<Integer, Property> e : childrenSource.entrySet()) {
-			add(e.getValue());
-		}
 	}
 
 	// public void setFilter(TreeStrings filter) {

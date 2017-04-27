@@ -1,16 +1,14 @@
 package com.github.tehnexus.sqlite;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class SQLUtil {
 
 	public static InputStream blobFromDatabase(String sql) throws SQLException {
 
-		try (SQLiteCon connectionSQLite = new SQLiteCon(defaultDatabaseLocation());
+		try (SQLiteCon connectionSQLite = new SQLiteCon(com.github.tehnexus.home.util.Util.defaultDatabaseLocation());
 				ResultSet rs = connectionSQLite.executeQuery(sql)) {
 
 			if (rs.next()) { // check if record exists, if yes use it
@@ -24,26 +22,15 @@ public class SQLUtil {
 		throw new SQLException("Cannot retreive stream from database.");
 	}
 
-	public static String defaultDatabaseLocation() {
-		Properties prop = new Properties();
-		try {
-			prop.loadFromXML(new FileInputStream("config.xml"));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			System.err.println(e.toString());
-		}
-		return prop.getProperty("databaselocation") + prop.getProperty("databasename");
-	}
-
 	public static void executePreparedStatement(String sqlString, Object[] args) {
 		Runnable runnable = () -> {
-				try (SQLiteCon connectionSQLite = new SQLiteCon(defaultDatabaseLocation())) {
-					connectionSQLite.executePreparedStatement(sqlString, args);
-				}
-				catch (SQLException e) {
-					e.printStackTrace();
-				}
+			try (SQLiteCon connectionSQLite = new SQLiteCon(
+					com.github.tehnexus.home.util.Util.defaultDatabaseLocation())) {
+				connectionSQLite.executePreparedStatement(sqlString, args);
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
 		};
 		new Thread(runnable).start();
 	}

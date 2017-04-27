@@ -25,8 +25,6 @@ public class Product extends Property {
 	private ZonedDateTime	dateWarEndGMT;
 	private ZonedDateTime	dateWarEndLocal;
 
-	// private HashMap<Long, Attachment> attachments;
-
 	private Product(Builder builder) {
 		super(builder.id, builder.name, false);
 		fullname = builder.fullname;
@@ -44,6 +42,26 @@ public class Product extends Property {
 		setIdType(Identifier.PAYMENT, builder.idPay, 0);
 
 		computeDates();
+	}
+
+	private void computeDates() {
+		ZoneId zoneLocal = ZoneId.systemDefault();
+
+		dateBuyGMT = Instant.ofEpochSecond(instantBuy.getEpochSecond()).atZone(zoneGMT);
+
+		dateBuyLocal = dateBuyGMT.withZoneSameInstant(zoneLocal);
+
+		int years = (int) warranty;
+		dateWarEndGMT = dateBuyGMT.plusYears(years);
+		dateWarEndLocal = dateBuyLocal.plusYears(years);
+
+		if (warranty % 1 != 0) { // double has no decimals -> add days
+			double dec = warranty - years;
+			long months = (long) (12 * dec);
+			dateWarEndGMT = dateWarEndGMT.plusMonths(months);
+			dateWarEndLocal = dateWarEndLocal.plusMonths(months);
+		}
+
 	}
 
 	public ZonedDateTime getBuyDateGMT() {
@@ -128,26 +146,6 @@ public class Product extends Property {
 	@Override
 	public String toString() {
 		return fullname + " (" + getName() + ")";
-	}
-
-	private void computeDates() {
-		ZoneId zoneLocal = ZoneId.systemDefault();
-
-		dateBuyGMT = Instant.ofEpochSecond(instantBuy.getEpochSecond()).atZone(zoneGMT);
-
-		dateBuyLocal = dateBuyGMT.withZoneSameInstant(zoneLocal);
-
-		int years = (int) warranty;
-		dateWarEndGMT = dateBuyGMT.plusYears(years);
-		dateWarEndLocal = dateBuyLocal.plusYears(years);
-
-		if (warranty % 1 != 0) { // double has no decimals -> add days
-			double dec = warranty - years;
-			long months = (long) (12 * dec);
-			dateWarEndGMT = dateWarEndGMT.plusMonths(months);
-			dateWarEndLocal = dateWarEndLocal.plusMonths(months);
-		}
-
 	}
 
 	public static class Builder {
@@ -239,7 +237,5 @@ public class Product extends Property {
 			this.warranty = warranty;
 			return this;
 		}
-
 	}
-
 }

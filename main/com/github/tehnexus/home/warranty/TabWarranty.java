@@ -1,6 +1,7 @@
 package com.github.tehnexus.home.warranty;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -12,17 +13,23 @@ import javax.swing.SwingConstants;
 
 import com.github.tehnexus.awt.XFont;
 import com.github.tehnexus.home.util.Identifier;
+import com.github.tehnexus.home.warranty.classes.Product;
 import com.github.tehnexus.home.warranty.classes.Properties;
 import com.github.tehnexus.home.warranty.tree.TreePanel;
 import com.github.tehnexus.sqlite.HomeData;
 
 public class TabWarranty extends JPanel {
 
+	private final static String	CARD_SUMMARY		= "summary";
+	private final static String	CARD_EDITOR			= "editor";
+
 	private PropertyListener	propertyListener	= new PropertyListener();
 
 	private HomeData			homeData;
 
 	private TreePanel			treePanel;
+	private JPanel				panSummary;
+	private JPanel				cards;
 	private Editor				editor;
 
 	public TabWarranty() {
@@ -44,10 +51,18 @@ public class TabWarranty extends JPanel {
 		treePanel = new TreePanel();
 		splitPane.setLeftComponent(treePanel);
 
+		// panSummary = new Summary(); // TODO: summary class
+		panSummary = new JPanel();
 		// create new tablayout and add it to right side of plit pane
 		JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		tabbedPane.setFont(XFont.FONT_BTNCONFIRM_DEFAULT);
-		splitPane.setRightComponent(tabbedPane);
+
+		// crreate cardlayout
+		cards = new JPanel(new CardLayout());
+		cards.add(panSummary, CARD_SUMMARY);
+		cards.add(tabbedPane, CARD_EDITOR);
+
+		splitPane.setRightComponent(cards);
 
 		// create viewer
 		// viewer = new JPanel();
@@ -55,7 +70,7 @@ public class TabWarranty extends JPanel {
 
 		// create editor
 		editor = new Editor();
-		
+
 		tabbedPane.addTab("Editor", null, editor, null);
 		tabbedPane.setSelectedComponent(editor);
 
@@ -99,11 +114,27 @@ public class TabWarranty extends JPanel {
 					break;
 
 				case "treeSelectionEvent":
-//					editor.setVisible(true);
-					editor.loadProduct(pce.getNewValue());
+					// editor.setVisible(true);
+					CardLayout cl = (CardLayout) (cards.getLayout());
+					if (!(pce.getNewValue() instanceof Product)) {
+						editor.clear();
+						cl.show(cards, CARD_SUMMARY);
+					}
+					else {
+						editor.loadProduct(pce.getNewValue());
+						cl.show(cards, CARD_EDITOR);
+					}
+
 					break;
 
 				default:
+					try {
+						throw new IOException("unhandled propertyChangeString: '" + pce.getPropertyName()
+								+ "' in TabWarranty.PropertyListener");
+					}
+					catch (IOException e) {
+						e.printStackTrace();
+					}
 					break;
 			}
 		}

@@ -21,20 +21,6 @@ public class XMouseAdapter extends MouseAdapter {
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
-		clickLoc = e.getPoint();
-		imgLocation = panImage.getImageLocation();
-		Component c = panImage;
-		c.setCursor(new Cursor(Cursor.MOVE_CURSOR));
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		Component c = panImage;
-		c.setCursor(Cursor.getDefaultCursor());
-	}
-
-	@Override
 	public void mouseDragged(MouseEvent e) {
 
 		Point mouseLoc = e.getPoint();
@@ -47,6 +33,20 @@ public class XMouseAdapter extends MouseAdapter {
 		if (!panImage.setImageLocation(imgLocation.x + xOffset, imgLocation.y + yOffset)) {
 			mousePressed(e);
 		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		clickLoc = e.getPoint();
+		imgLocation = panImage.getImageLocation();
+		Component c = panImage;
+		c.setCursor(new Cursor(Cursor.MOVE_CURSOR));
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		Component c = panImage;
+		c.setCursor(Cursor.getDefaultCursor());
 	}
 
 	@Override

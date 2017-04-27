@@ -19,16 +19,6 @@ public class XFile {
 
 		UNKNOWN(new byte[] {});
 
-		private byte[] headers;
-
-		Type(byte[] headers) {
-			this.headers = headers;
-		}
-
-		public byte[] getHeaders() {
-			return headers;
-		}
-
 		public static Type getType(byte[] byteArray) {
 			for (Type type : Type.values()) { // loop types
 				byte[] typeHead = type.getHeaders();
@@ -39,6 +29,15 @@ public class XFile {
 			return UNKNOWN;
 		}
 
+		private byte[] headers;
+
+		Type(byte[] headers) {
+			this.headers = headers;
+		}
+
+		public byte[] getHeaders() {
+			return headers;
+		}
 	}
 
 }

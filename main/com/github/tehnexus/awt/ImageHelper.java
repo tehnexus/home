@@ -9,42 +9,6 @@ public class ImageHelper extends BufferedImage {
 
 	private final static int DEAFULT_TYPE = BufferedImage.TYPE_INT_ARGB;
 
-	public ImageHelper(int width, int height) {
-		super(width, height, DEAFULT_TYPE);
-	}
-
-	public ImageHelper(int width, int height, int type) {
-		super(width, height, type);
-	}
-
-	public static BufferedImage getScaledInstanceToFit(BufferedImage img, double scaleFactor) {
-		return getScaledInstance(img, scaleFactor);
-	}
-
-	public static BufferedImage getScaledInstanceToFit(BufferedImage img, Dimension size) {
-		double scaleFactor = getScaleFactorToFit(img, size);
-		return getScaledInstance(img, scaleFactor);
-	}
-
-	private static BufferedImage getScaledInstance(BufferedImage img, double dScaleFactor) {
-
-		BufferedImage imgScale = img;
-
-		int iImageWidth = (int) Math.round(img.getWidth() * dScaleFactor);
-		int iImageHeight = (int) Math.round(img.getHeight() * dScaleFactor);
-
-		if (dScaleFactor < 1.0d) {
-			imgScale = getScaledDownInstance(img, iImageWidth, iImageHeight);
-		}
-		else if (dScaleFactor > 1.0d) {
-			imgScale = getScaledUpInstance(img, iImageWidth, iImageHeight);
-		}
-		else {
-			imgScale = img;
-		}
-		return imgScale;
-	}
-
 	private static BufferedImage getScaledDownInstance(BufferedImage img, int targetWidth, int targetHeight) {
 
 		int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
@@ -88,6 +52,34 @@ public class ImageHelper extends BufferedImage {
 		return ret;
 	}
 
+	private static BufferedImage getScaledInstance(BufferedImage img, double dScaleFactor) {
+
+		BufferedImage imgScale = img;
+
+		int iImageWidth = (int) Math.round(img.getWidth() * dScaleFactor);
+		int iImageHeight = (int) Math.round(img.getHeight() * dScaleFactor);
+
+		if (dScaleFactor < 1.0d) {
+			imgScale = getScaledDownInstance(img, iImageWidth, iImageHeight);
+		}
+		else if (dScaleFactor > 1.0d) {
+			imgScale = getScaledUpInstance(img, iImageWidth, iImageHeight);
+		}
+		else {
+			imgScale = img;
+		}
+		return imgScale;
+	}
+
+	public static BufferedImage getScaledInstanceToFit(BufferedImage img, Dimension size) {
+		double scaleFactor = getScaleFactorToFit(img, size);
+		return getScaledInstance(img, scaleFactor);
+	}
+
+	public static BufferedImage getScaledInstanceToFit(BufferedImage img, double scaleFactor) {
+		return getScaledInstance(img, scaleFactor);
+	}
+
 	private static BufferedImage getScaledUpInstance(BufferedImage img, int targetWidth, int targetHeight) {
 
 		int type = BufferedImage.TYPE_INT_ARGB;
@@ -125,6 +117,14 @@ public class ImageHelper extends BufferedImage {
 		return ret;
 	}
 
+	private static double getScaleFactor(int iMasterSize, int iTargetSize) {
+
+		double dScale = 1;
+		dScale = (double) iTargetSize / (double) iMasterSize;
+
+		return dScale;
+	}
+
 	private static double getScaleFactorToFit(BufferedImage img, Dimension size) {
 
 		double dScale = 1;
@@ -135,14 +135,6 @@ public class ImageHelper extends BufferedImage {
 
 			dScale = getScaleFactorToFit(new Dimension(imageWidth, imageHeight), size);
 		}
-		return dScale;
-	}
-
-	private static double getScaleFactor(int iMasterSize, int iTargetSize) {
-
-		double dScale = 1;
-		dScale = (double) iTargetSize / (double) iMasterSize;
-
 		return dScale;
 	}
 
@@ -157,6 +149,14 @@ public class ImageHelper extends BufferedImage {
 			dScale = Math.min(dScaleHeight, dScaleWidth);
 		}
 		return dScale;
+	}
+
+	public ImageHelper(int width, int height) {
+		super(width, height, DEAFULT_TYPE);
+	}
+
+	public ImageHelper(int width, int height, int type) {
+		super(width, height, type);
 	}
 
 	// private static double getScaleFactorToFill(Dimension masterSize,
