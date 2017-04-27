@@ -24,7 +24,7 @@ public class XMouseAdapter extends MouseAdapter {
 	public void mouseDragged(MouseEvent e) {
 		if (!panImage.isAllowMove())
 			return;
-		
+
 		Point mouseLoc = e.getPoint();
 
 		// Determine how much the mouse moved since the initial click
@@ -40,7 +40,7 @@ public class XMouseAdapter extends MouseAdapter {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		clickLoc = e.getPoint();
-		
+
 		if (!panImage.isAllowMove())
 			return;
 		imgLocation = panImage.getImageLocation();
@@ -58,7 +58,7 @@ public class XMouseAdapter extends MouseAdapter {
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (!panImage.isAllowZoom())
 			return;
-		
+
 		imgLocation = panImage.getImageLocation();
 
 		int notches = e.getWheelRotation();

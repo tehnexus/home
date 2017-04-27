@@ -138,27 +138,6 @@ public class AttachmentTableView extends JPanel {
 		});
 	}
 
-	private void setAttachmentAsThumb() {
-		Attachment attach = getSelectedAttachment();
-
-		// clear thumb status for product
-		String sqlString = "UPDATE tblAttachment SET isThumb=0 WHERE ProductID=?";
-		SQLUtil.executePreparedStatement(sqlString, attach.getIdForeign());
-
-		List<Property> assignedAttachments = product.getType(Identifier.ATTACHMENT);
-		for (Property p : assignedAttachments) {
-			Attachment a = (Attachment) p;
-			a.setIsThumb(false);
-		}
-
-		// assign thumb
-		attach.setIsThumb(true);
-		sqlString = "UPDATE tblAttachment SET isThumb=1 WHERE ID=?";
-		SQLUtil.executePreparedStatement(sqlString, attach.getId());
-
-		buildThumbImage(attach);
-	}
-
 	private void createGUI() {
 		setLayout(new BorderLayout());
 
@@ -196,6 +175,13 @@ public class AttachmentTableView extends JPanel {
 		panThumb.setMargin_px(0);
 
 		splitPane.setBottomComponent(panThumb);
+	}
+
+	private Attachment getSelectedAttachment() {
+		int tableRow = table.getSelectedRow();
+		if (tableRow < 0)
+			return null;
+		return tableModel.getAttachmentAt(table.convertRowIndexToModel(tableRow));
 	}
 
 	public void initialize(Properties properties) {
@@ -255,13 +241,6 @@ public class AttachmentTableView extends JPanel {
 		TableButtonColumn tableButtonColumn = new TableButtonColumn(table, new TableButtonAction(), 2);
 	}
 
-	private Attachment getSelectedAttachment() {
-		int tableRow = table.getSelectedRow();
-		if (tableRow < 0)
-			return null;
-		return tableModel.getAttachmentAt(table.convertRowIndexToModel(tableRow));
-	}
-
 	private void removeAttachment() {
 
 		ConfirmDialog dialog = new ConfirmDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Delete Attachment",
@@ -278,6 +257,27 @@ public class AttachmentTableView extends JPanel {
 
 		properties.getTypes(Identifier.ATTACHMENT).remove(attach);
 		product.removeType(Identifier.ATTACHMENT, attach);
+	}
+
+	private void setAttachmentAsThumb() {
+		Attachment attach = getSelectedAttachment();
+
+		// clear thumb status for product
+		String sqlString = "UPDATE tblAttachment SET isThumb=0 WHERE ProductID=?";
+		SQLUtil.executePreparedStatement(sqlString, attach.getIdForeign());
+
+		List<Property> assignedAttachments = product.getType(Identifier.ATTACHMENT);
+		for (Property p : assignedAttachments) {
+			Attachment a = (Attachment) p;
+			a.setIsThumb(false);
+		}
+
+		// assign thumb
+		attach.setIsThumb(true);
+		sqlString = "UPDATE tblAttachment SET isThumb=1 WHERE ID=?";
+		SQLUtil.executePreparedStatement(sqlString, attach.getId());
+
+		buildThumbImage(attach);
 	}
 
 	public class AttachmentTableModel extends AbstractTableModel {

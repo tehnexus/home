@@ -1,5 +1,6 @@
 package com.github.tehnexus.home.warranty;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -34,9 +35,6 @@ import com.github.tehnexus.swing.XTextArea;
 import com.github.tehnexus.swing.XTextField;
 
 import net.miginfocom.swing.MigLayout;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 public class Editor extends JPanel {
 
@@ -93,15 +91,17 @@ public class Editor extends JPanel {
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		add(splitPane, BorderLayout.CENTER);
-//		JPanel panEditBack = new JPanel(new BorderLayout());
-//		splitPane.setLeftComponent(panEditBack);
-		
-		JPanel panEdit = new JPanel(new MigLayout("", "[3px][fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][3px]", "[][][][][][][][][][][][][][grow][]"));
+		// JPanel panEditBack = new JPanel(new BorderLayout());
+		// splitPane.setLeftComponent(panEditBack);
 
-//		panEditBack.add(panEdit, BorderLayout.CENTER);
+		JPanel panEdit = new JPanel(
+				new MigLayout("", "[3px][fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][20px,grow,fill][3px]",
+						"[][][][][][][][][][][][][][grow][]"));
+
+		// panEditBack.add(panEdit, BorderLayout.CENTER);
 
 		splitPane.setLeftComponent(panEdit);
-		
+
 		attachTableView = new AttachmentTableView();
 		splitPane.setRightComponent(attachTableView);
 

@@ -9,10 +9,6 @@ public class UnsupportedFileTypeException extends Exception {
 		super(message);
 	}
 
-	public UnsupportedFileTypeException(Throwable cause) {
-		super(cause);
-	}
-
 	public UnsupportedFileTypeException(String message, Throwable cause) {
 		super(message, cause);
 	}
@@ -20,5 +16,9 @@ public class UnsupportedFileTypeException extends Exception {
 	public UnsupportedFileTypeException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
+	}
+
+	public UnsupportedFileTypeException(Throwable cause) {
+		super(cause);
 	}
 }

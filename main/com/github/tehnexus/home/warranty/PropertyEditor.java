@@ -100,15 +100,14 @@ public class PropertyEditor extends JDialog {
 				.constraints("cell 1 0,growx").build();
 
 		txtName = new XTextField.Builder(pan).font(XFont.FONT_DEFAULT).constraints("cell 1 1,growx").build();
-		
+
 		txtFullname = new XTextField.Builder(pan).font(XFont.FONT_DEFAULT).constraints("cell 1 2,growx").build();
 
 		// labels
 		pan.add(new XLabel.Builder("ID:").labelFor(ftxtID).build(), "cell 0 0");
 		pan.add(new XLabel.Builder("Name:").labelFor(txtName).build(), "cell 0 1");
 		pan.add(new XLabel.Builder("Description:").labelFor(txtFullname).build(), "cell 0 2");
-		
-		
+
 		// add buttons
 		pan.add(btnSave, "cell 1 9");
 		btnSave.addActionListener(buttonListener);

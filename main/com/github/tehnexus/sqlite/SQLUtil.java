@@ -21,21 +21,20 @@ public class SQLUtil {
 		}
 		throw new SQLException("Cannot retreive stream from database.");
 	}
-	
+
 	public static void executePreparedStatement(String sqlString, Object arg) {
-		executePreparedStatement(sqlString, new Object[] {arg});
+		executePreparedStatement(sqlString, new Object[] { arg });
 	}
 
 	public static void executePreparedStatement(String sqlString, Object[] args) {
-//		Runnable runnable = () -> {
-			try (SQLiteCon connectionSQLite = new SQLiteCon(
-					com.github.tehnexus.home.util.Util.defaultDatabaseLocation())) {
-				connectionSQLite.executePreparedStatement(sqlString, args);
-			}
-			catch (SQLException e) {
-				e.printStackTrace();
-			}
-//		};
-//		new Thread(runnable).start();
+		// Runnable runnable = () -> {
+		try (SQLiteCon connectionSQLite = new SQLiteCon(com.github.tehnexus.home.util.Util.defaultDatabaseLocation())) {
+			connectionSQLite.executePreparedStatement(sqlString, args);
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		// };
+		// new Thread(runnable).start();
 	}
 }
